@@ -40,6 +40,6 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: normatisse-com
-          directory: ./output/public
+          directory: ./.output/public
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
