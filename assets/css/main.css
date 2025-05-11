@@ -1,0 +1,32 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+@theme {
+    --ui-container: 700px;
+    --ui-color-primary: var(--color-watercourse-500);
+
+    --color-watercourse-50: #ebfef6;
+    --color-watercourse-100: #cefde7;
+    --color-watercourse-200: #a2f8d4;
+    --color-watercourse-300: #66efc0;
+    --color-watercourse-400: #29dea5;
+    --color-watercourse-500: #05c48e;
+    --color-watercourse-600: #00a075;
+    --color-watercourse-700: #008060;
+    --color-watercourse-800: #00674f;
+    --color-watercourse-900: #015341;
+    --color-watercourse-950: #002f25;
+}
+
+.logo-font {
+    font-family: 'Josefin Sans', sans-serif;
+    color: #00674F;
+    @apply font-bold;
+}
+
+.sub-logo-font {
+    font-family: 'Josefin Sans', sans-serif;
+    color: #F55C81;
+    @apply font-bold italic;
+}
+
