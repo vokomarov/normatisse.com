@@ -3,7 +3,7 @@ import BackgroundTop from '@/components/BackgroundTop.vue';
 import BackgroundBottom from '@/components/BackgroundBottom.vue';
 
 const INSTAGRAM_LINK = 'https://instagram.com/normatisse';
-const INSTAGRAM_PH_LINK = 'https://www.instagram.com/normatisse.ph';
+const INSTAGRAM_PH_LINK = 'https://instagram.com/normatisse.ph';
 
 const year = ref(new Date().getFullYear());
 
@@ -12,7 +12,7 @@ useSeoMeta({
     ogTitle: 'Normatisse - Bakery & Photography',
     description: 'Ділюся з вами частинкою себе. Bakery & Photography.',
     ogDescription: 'Ділюся з вами частинкою себе. Bakery & Photography.',
-    // ogImage: 'https://example.com/image.png',
+    ogImage: '/images/logo.svg',
     twitterCard: 'summary_large_image',
 })
 </script>
@@ -33,7 +33,9 @@ useSeoMeta({
                     </div>
                 </div>
                 <div class="text-center">
-                    <h1 class="text-5xl tracking-tight text-balance  sm:text-7xl logo-font">NORMatisse</h1>
+                    <div class="text-center flex justify-center pb-3">
+                        <img class="max-w-md" src="/images/logo.svg" alt="Normatisse">
+                    </div>
                     <p class="mt-8 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">Ділюся з вами частинкою себе.</p>
                     <div class="mt-10 flex items-center justify-center gap-x-6">
                         <UButton variant="solid" color="primary" size="xl" to="#offers">
