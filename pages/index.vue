@@ -3,6 +3,7 @@ import BackgroundTop from '@/components/BackgroundTop.vue';
 import BackgroundBottom from '@/components/BackgroundBottom.vue';
 
 const INSTAGRAM_LINK = 'https://instagram.com/normatisse';
+const INSTAGRAM_BAKERY_LINK = 'https://instagram.com/normatisse.bakery';
 const INSTAGRAM_PH_LINK = 'https://instagram.com/normatisse.ph';
 
 const year = ref(new Date().getFullYear());
@@ -22,16 +23,6 @@ useSeoMeta({
         <div class="relative isolate px-6 pt-14 lg:px-8">
             <BackgroundTop />
             <div class="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
-                <div class="hidden sm:mb-8 sm:flex sm:justify-center">
-                    <div class="subscribe-label">
-                        Незабаром відкриття.
-                        <a :href="INSTAGRAM_LINK" class="font-semibold text-primary-600">
-                            <span class="absolute inset-0" aria-hidden="true" />
-                            Дізнатись більше
-                            <span aria-hidden="true">&rarr;</span>
-                        </a>
-                    </div>
-                </div>
                 <div class="text-center">
                     <div class="text-center flex justify-center pb-3">
                         <img class="max-w-md" src="/images/logo.svg" alt="Normatisse">
@@ -41,9 +32,6 @@ useSeoMeta({
                         <UButton variant="solid" color="primary" size="xl" to="#offers">
                             Що пропонуємо?
                         </UButton>
-                        <UButton variant="link" color="neutral" size="xl" target="_blank" :to="INSTAGRAM_LINK">
-                            Замовити <span aria-hidden="true">→</span>
-                        </UButton>
                     </div>
                 </div>
             </div>
@@ -52,7 +40,7 @@ useSeoMeta({
 
         <div class="relative z-0" id="offers">
             <a class="offer-card mb-6"
-               :href="INSTAGRAM_LINK"
+               :href="INSTAGRAM_BAKERY_LINK"
                target="_blank"
             >
                 <div class="p-4 sm:p-6">
