@@ -38,8 +38,9 @@ useSeoMeta({
             <BackgroundBottom />
         </div>
 
-        <div class="relative z-0" id="offers">
-            <a class="offer-card mb-6"
+        <div id="offers" class="relative z-0">
+            <a
+               class="offer-card mb-6"
                :href="INSTAGRAM_BAKERY_LINK"
                target="_blank"
             >
@@ -49,7 +50,8 @@ useSeoMeta({
                 </div>
             </a>
 
-            <a class="offer-card shadow-md mb-6"
+            <a
+               class="offer-card shadow-md mb-6"
                :href="INSTAGRAM_PH_LINK"
                target="_blank"
             >
