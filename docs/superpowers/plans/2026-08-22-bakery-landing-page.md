@@ -4,15 +4,16 @@
 
 **Goal:** Build a Ukrainian-language `/bakery` landing page for Normatisse Bakery inside the existing Nuxt 4 site, using the site's existing design tokens and real content sourced from Instagram and local pricing assets.
 
-**Architecture:** One new page (`pages/bakery.vue`) composed of small, self-contained, prop-free presentation components under `components/` (flat, matching existing convention), each responsible for one section. All content is static and lives inline in the components — no CMS, no external data fetching at runtime.
+**Architecture:** One new page (`pages/bakery.vue`) composed of small, self-contained, prop-free presentation components under `components/` (flat, matching existing convention), each responsible for one section. All content is static and lives inline in the components — no CMS, no external data fetching at runtime. Visual/layout craft (not color or type, which are fixed) is produced via the `frontend-design` skill in Task 1, and every later task's code sample is a structural baseline that must be refined against that direction, not copied verbatim.
 
-**Tech Stack:** Nuxt 4, Vue 3 `<script setup>`, Nuxt UI 4 components (`UContainer`, `UButton`, `UAccordion`, `UCard`, `USeparator`), Tailwind CSS v4 (`@theme`), existing `watercourse` color tokens, Josefin Sans via `@nuxt/fonts`.
+**Tech Stack:** Nuxt 4, Vue 3 `<script setup>`, Nuxt UI 4 components (`UContainer`, `UButton`, `UAccordion`, `UCard`, `USeparator`), Tailwind CSS v4 (`@theme`), existing `watercourse` color tokens, Josefin Sans via `@nuxt/fonts`, `frontend-design` skill for layout/signature-element direction.
 
 **Spec:** `docs/superpowers/specs/2026-08-22-bakery-landing-page-design.md`
 
 ## Global Constraints
 
-- Use only existing design tokens: `watercourse` color scale, `.logo-font` (#00674F), `.sub-logo-font` (#F55C81), Josefin Sans. No new colors or fonts.
+- Use only existing design tokens: `watercourse` color scale, `.logo-font` (#00674F), `.sub-logo-font` (#F55C81), Josefin Sans. No new colors or fonts — per the `frontend-design` skill's own rule, "where the brief pins down a visual direction, follow it exactly," and this brief pins down color and type.
+- Layout, imagery treatment, and each section's one signature element are open for creative direction and must go through the `frontend-design` skill (Task 1) before later tasks' code is finalized — later tasks' code blocks are a structural baseline, not final markup to copy verbatim.
 - No order/checkout form — CTA/Contact section only links out to existing channels.
 - `pages/index.vue` stays as-is except its bakery teaser link, which must point to `/bakery` instead of the raw Instagram URL.
 - No standalone "Gallery" section and no carousel — product photos live inside the Products/Pricing cards; extra photos go in a small asymmetric bento strip.
@@ -23,15 +24,43 @@
 
 ---
 
-### Task 1: Feature branch + page shell with Hero section
+### Task 1: Visual direction pass (frontend-design skill)
+
+**Files:**
+- Create: `docs/superpowers/specs/2026-08-22-bakery-landing-page-visual-direction.md`
+
+**Interfaces:** None — this task produces a short design note that Tasks 2, 4 (photo strip), 6, and 7 must follow when finalizing markup/classes. It does not touch application code.
+
+- [ ] **Step 1: Invoke the `frontend-design` skill**
+
+Brief it with: subject = Normatisse Bakery, a home-bakery landing page for Торти/Кекси/Капкейки/Мадлен; audience = Ukrainian customers ordering custom cakes/treats; page's single job = get the visitor from "what do they make and how much" to a DM/call. Fixed inputs (non-negotiable, per the skill's own "brief wins" rule): color palette is `watercourse-{50..950}` plus `#00674F` (`.logo-font`) and `#F55C81` (`.sub-logo-font`); typeface is Josefin Sans for everything (no second typeface to source); existing decorative motif is the blurred blob shapes in `components/BackgroundTop.vue`/`BackgroundBottom.vue`. Open axes: layout concept per section, how the real product photos (Task 3) are framed/cropped, and one signature element for the page.
+
+- [ ] **Step 2: Run the skill's brainstorm → critique pass**
+
+Produce the compact token system the skill asks for, but with color/type sections marked "fixed, see above" instead of invented — spend the actual creative effort on layout concepts (ASCII wireframes) for: Hero, the 4 product cards, the bento photo strip, and the reviews grid, plus the one signature element for the whole page (e.g., a recurring motif tying the blob background to the bakery's watercolor-splatter branding seen in the `/prices` graphics). Self-critique against the skill's three generic-AI-design patterns and revise anything that reads as a template default (plain centered hero + big CTA button, uniform equal-size card grid, evenly-spaced photo grid all count as template defaults to push past).
+
+- [ ] **Step 3: Write the direction note**
+
+Save the finalized layout concepts, the signature element, and any concrete class/structure decisions (e.g., specific grid-template shapes, image aspect ratios, hover/scroll interactions) to `docs/superpowers/specs/2026-08-22-bakery-landing-page-visual-direction.md`.
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add docs/superpowers/specs/2026-08-22-bakery-landing-page-visual-direction.md
+git commit -m "docs: add visual direction note for bakery landing page"
+```
+
+---
+
+### Task 2: Feature branch + page shell with Hero section
 
 **Files:**
 - Create: `pages/bakery.vue`
 - Create: `components/BakeryHero.vue`
 
 **Interfaces:**
-- `BakeryHero.vue`: no props, no emits — fully self-contained. Renders logo, tagline, and a CTA `UButton` linking to `#products`.
-- `pages/bakery.vue`: imports and renders `BakeryHero`, plus `BackgroundTop`/`BackgroundBottom` exactly as `pages/index.vue` does.
+- `BakeryHero.vue`: no props, no emits — fully self-contained. Renders logo, tagline, and a CTA linking to `#products`, per Task 1's hero layout concept.
+- `pages/bakery.vue`: imports and renders `BakeryHero`, plus `BackgroundTop`/`BackgroundBottom` exactly as `pages/index.vue` does (unless Task 1's direction note calls for adapting the blob motif — in that case, adapt `BackgroundTop`/`BackgroundBottom` usage accordingly, not the shared components themselves, since those are also used by the homepage).
 
 - [ ] **Step 1: Create the feature branch**
 
@@ -39,7 +68,9 @@
 git checkout -b feature/bakery-landing-page
 ```
 
-- [ ] **Step 2: Create `components/BakeryHero.vue`**
+- [ ] **Step 2: Create `components/BakeryHero.vue` per Task 1's hero direction**
+
+Structural baseline (refine layout/classes per the direction note; keep the content below):
 
 ```vue
 <template>
@@ -104,7 +135,7 @@ Run: `npm run dev` (leave running), then in another terminal:
 curl -s http://localhost:3000/bakery | grep -o "make day sweeter"
 ```
 
-Expected: `make day sweeter` printed once. Also open `http://localhost:3000/bakery` with the `agent-browser` skill and take a screenshot to confirm the logo, tagline, and CTA button render without layout errors.
+Expected: `make day sweeter` printed once. Also open `http://localhost:3000/bakery` with the `agent-browser` skill and take a screenshot to confirm the logo, tagline, and CTA button render without layout errors, and that the hero matches Task 1's direction rather than reading as a generic centered-hero-with-button template.
 
 - [ ] **Step 5: Commit**
 
@@ -115,17 +146,19 @@ git commit -m "feat: add bakery landing page hero section"
 
 ---
 
-### Task 2: Products & Pricing section (data + component, no photos yet)
+### Task 3: Products & Pricing section (data + component, no photos yet)
 
 **Files:**
 - Create: `components/BakeryProducts.vue`
 - Modify: `pages/bakery.vue` (mount `BakeryProducts` after the hero, add `id="products"` wrapper)
 
 **Interfaces:**
-- `BakeryProducts.vue`: no props. Defines a local `interface Product { slug: string; name: string; note?: string; photo?: string; variants: { label: string; price: string }[]; description: string[] }` and a `const products: Product[]` array with the four product lines. `photo` fields are left `undefined` in this task (Task 4 fills them in) and the template must render correctly with `photo` absent (fallback: no `<img>` rendered, card still shows text).
+- `BakeryProducts.vue`: no props. Defines a local `interface Product { slug: string; name: string; note?: string; photo?: string; variants: { label: string; price: string }[]; description: string[] }` and a `const products: Product[]` array with the four product lines. `photo` fields are left `undefined` in this task (Task 5 fills them in) and the template must render correctly with `photo` absent (fallback: no `<img>` rendered, card still shows text).
 - Consumed by `pages/bakery.vue`, which renders `<BakeryProducts id="products" />` — since Vue attrs fall through automatically, no `id` prop needs to be declared explicitly.
 
 - [ ] **Step 1: Create `components/BakeryProducts.vue`**
+
+Structural baseline for the data and template — refine the layout (card shapes/spans, how photos will be framed) per Task 1's product-card layout concept, but keep the data below verbatim:
 
 ```vue
 <script setup lang="ts">
@@ -309,7 +342,7 @@ git commit -m "feat: add products and pricing section to bakery page"
 
 ---
 
-### Task 3: Source real product and bento-strip photos from Instagram
+### Task 4: Source real product and bento-strip photos from Instagram
 
 **Files:**
 - Create: `public/images/bakery/gallery/torty.jpg`
@@ -320,7 +353,7 @@ git commit -m "feat: add products and pricing section to bakery page"
 - Create: `public/images/bakery/gallery/bento-2.jpg`
 - Create: `public/images/bakery/gallery/bento-3.jpg`
 
-**Interfaces:** None — this task produces static assets consumed by Tasks 4 and 5. No code changes.
+**Interfaces:** None — this task produces static assets consumed by Tasks 5 and 6. No code changes.
 
 This task needs a live, already-authenticated Instagram session (established earlier in this project via the `agent-browser` skill). It downloads the *real* `<img>` CDN source, not a screenshot, so no Instagram chrome is ever present in the file.
 
@@ -379,7 +412,7 @@ git commit -m "feat: add real product photos for bakery page"
 
 ---
 
-### Task 4: Wire product photos into pricing cards, build the bento photo strip
+### Task 5: Wire product photos into pricing cards, build the bento photo strip
 
 **Files:**
 - Modify: `components/BakeryProducts.vue`
@@ -387,8 +420,8 @@ git commit -m "feat: add real product photos for bakery page"
 - Modify: `pages/bakery.vue`
 
 **Interfaces:**
-- `BakeryProducts.vue`: set the `photo` field on each of the four `products` entries to its downloaded path (e.g. `/images/bakery/gallery/torty.jpg`). No structural change — the template already handles `photo` conditionally from Task 2.
-- `BakeryPhotoStrip.vue`: no props. Renders the 3 bento images from `/images/bakery/gallery/bento-{1,2,3}.jpg` in a CSS-grid layout with varied tile spans and slight rotation, no carousel/slider library.
+- `BakeryProducts.vue`: set the `photo` field on each of the four `products` entries to its downloaded path (e.g. `/images/bakery/gallery/torty.jpg`). No structural change beyond whatever Task 1's direction called for — the template already handles `photo` conditionally from Task 3.
+- `BakeryPhotoStrip.vue`: no props. Renders the 3 bento images from `/images/bakery/gallery/bento-{1,2,3}.jpg` per Task 1's photo-strip layout concept — varied tile sizes/treatment, no carousel/slider library, not a uniform evenly-spaced grid.
 
 - [ ] **Step 1: Set the `photo` field for each product in `components/BakeryProducts.vue`**
 
@@ -420,6 +453,8 @@ git commit -m "feat: add real product photos for bakery page"
 ```
 
 - [ ] **Step 2: Create `components/BakeryPhotoStrip.vue`**
+
+Structural baseline — refine tile spans/rotation/treatment per Task 1's signature-element direction rather than a plain even bento grid:
 
 ```vue
 <template>
@@ -490,7 +525,7 @@ git commit -m "feat: wire real photos into product cards and bento strip"
 
 ---
 
-### Task 5: Crop and source review screenshots
+### Task 6: Crop and source review screenshots
 
 **Files:**
 - Create: `public/images/bakery/reviews/review-1.jpg`
@@ -499,7 +534,7 @@ git commit -m "feat: wire real photos into product cards and bento strip"
 - Create: `public/images/bakery/reviews/review-4.jpg`
 - Create: `public/images/bakery/reviews/review-5.jpg`
 
-**Interfaces:** None — static assets consumed by Task 6.
+**Interfaces:** None — static assets consumed by Task 7.
 
 The raw research screenshots (`rev-1.png` through `rev-15.png`) already exist in this session's scratchpad directory from earlier Instagram research. This task selects the 5 clearest ones and crops out Instagram's story-viewer chrome (top progress bar, close/next icons).
 
@@ -542,16 +577,18 @@ git commit -m "feat: add cropped review screenshots for bakery page"
 
 ---
 
-### Task 6: Reviews section component
+### Task 7: Reviews section component
 
 **Files:**
 - Create: `components/BakeryReviews.vue`
 - Modify: `pages/bakery.vue`
 
 **Interfaces:**
-- `BakeryReviews.vue`: no props. Renders the 5 images from `/images/bakery/reviews/review-{1..5}.jpg` in a responsive grid (not a carousel/slider).
+- `BakeryReviews.vue`: no props. Renders the 5 images from `/images/bakery/reviews/review-{1..5}.jpg` per Task 1's reviews-grid layout concept (not a carousel/slider, not necessarily a uniform grid).
 
 - [ ] **Step 1: Create `components/BakeryReviews.vue`**
+
+Structural baseline — refine per Task 1's direction:
 
 ```vue
 <template>
@@ -582,7 +619,7 @@ Add `import BakeryReviews from '@/components/BakeryReviews.vue';` to the script 
 
 - [ ] **Step 3: Verify**
 
-Screenshot the page: 5 review images display in a 3-column grid on desktop, stacking on mobile, no cropped-out chrome visible (double-check against Task 5's output), no console errors for missing images (404s).
+Screenshot the page: 5 review images display in a 3-column grid on desktop, stacking on mobile, no cropped-out chrome visible (double-check against Task 6's output), no console errors for missing images (404s).
 
 - [ ] **Step 4: Commit**
 
@@ -593,16 +630,18 @@ git commit -m "feat: add reviews section to bakery page"
 
 ---
 
-### Task 7: CTA/Contact section
+### Task 8: CTA/Contact section
 
 **Files:**
 - Create: `components/BakeryContact.vue`
 - Modify: `pages/bakery.vue`
 
 **Interfaces:**
-- `BakeryContact.vue`: no props. Defines a local `const CONTACT_PHONE = '+380734700263'` and `const INSTAGRAM_BAKERY_LINK = 'https://instagram.com/normatisse.bakery'`, and renders 4 `UButton` links plus a note that an order form is coming later.
+- `BakeryContact.vue`: no props. Defines a local `const CONTACT_PHONE = '+380734700263'` and `const INSTAGRAM_BAKERY_LINK = 'https://instagram.com/normatisse.bakery'`, and renders 4 links plus a note that an order form is coming later, per Task 1's CTA layout concept.
 
 - [ ] **Step 1: Create `components/BakeryContact.vue`**
+
+Structural baseline — refine per Task 1's direction:
 
 ```vue
 <script setup lang="ts">
@@ -683,7 +722,7 @@ git commit -m "feat: add contact section to bakery page"
 
 ---
 
-### Task 8: Footer, homepage link update, final QA pass
+### Task 9: Footer, homepage link update, final QA pass
 
 **Files:**
 - Modify: `pages/bakery.vue`
@@ -771,7 +810,7 @@ Expected: both exit with code 0. Fix any errors before proceeding.
 
 - [ ] **Step 4: Full visual QA pass**
 
-Using the `agent-browser` skill: screenshot `/bakery` at desktop (1440px) and mobile (375px) widths, and screenshot `/` to confirm the bakery teaser card now links to `/bakery` (click it and confirm navigation). Check the browser console for errors at both routes.
+Using the `agent-browser` skill: screenshot `/bakery` at desktop (1440px) and mobile (375px) widths, and screenshot `/` to confirm the bakery teaser card now links to `/bakery` (click it and confirm navigation). Check the browser console for errors at both routes. Cross-check the rendered page against Task 1's direction note — if any section still reads as a generic template default, revise it now rather than shipping it.
 
 - [ ] **Step 5: Commit**
 
@@ -784,6 +823,7 @@ git commit -m "feat: add footer to bakery page and link homepage teaser to it"
 
 ## Self-Review Notes
 
-- **Spec coverage:** Hero (Task 1), Products/Pricing with embedded photos (Tasks 2 & 4), bento photo strip replacing standalone Gallery (Task 4), Reviews as cropped screenshots (Tasks 5 & 6), CTA/Contact with all 4 channels (Task 7), Footer + homepage link update (Task 8), sourcing via real CDN download not screenshots (Task 3) — every spec section maps to a task.
+- **Spec coverage:** Visual direction via `frontend-design` (Task 1), Hero (Task 2), Products/Pricing with embedded photos (Tasks 3 & 5), bento photo strip replacing standalone Gallery (Task 5), Reviews as cropped screenshots (Tasks 6 & 7), CTA/Contact with all 4 channels (Task 8), Footer + homepage link update (Task 9), sourcing via real CDN download not screenshots (Task 4) — every spec section maps to a task.
 - **Out of scope confirmed:** no order form is built anywhere in this plan.
-- **Type consistency:** `Product`/`ProductVariant` interfaces defined once in Task 2 and only extended (not renamed) in Task 4; `CONTACT_PHONE` format (`+380734700263`) is consistent across Task 7's Telegram/Viber/phone links.
+- **Type consistency:** `Product`/`ProductVariant` interfaces defined once in Task 3 and only extended (not renamed) in Task 5; `CONTACT_PHONE` format (`+380734700263`) is consistent across Task 8's Telegram/Viber/phone links.
+- **frontend-design coverage:** named explicitly in the header, Architecture, Tech Stack, and Global Constraints; Task 1 runs it; Tasks 2, 5, 7, and 8 explicitly defer their layout/class choices to its output instead of treating the sample code as final.
