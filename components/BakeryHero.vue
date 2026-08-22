@@ -19,8 +19,14 @@ import SprinkleScatter from '@/components/SprinkleScatter.vue';
         </div>
 
         <div class="relative lg:col-span-7 text-left hero-fade-in">
-            <!-- Placement 2: small sprinkle cluster, top-left of the text block -->
-            <div class="absolute -z-10 -top-8 -left-6 lg:-top-10 lg:-left-10" aria-hidden="true">
+            <!--
+              Placement 2: small sprinkle cluster, top-left of the text block.
+              lg-only — on mobile, Placement 1 (top-right-of-logo corner tuck) is
+              the sole decoration cluster per §1's mobile wireframe ("a single
+              small sprinkle group... not its own block"); showing both here too
+              would put two clusters on screen at once.
+            -->
+            <div class="hidden lg:block absolute -z-10 lg:-top-10 lg:-left-10" aria-hidden="true">
                 <SprinkleScatter class="rotate-[-12deg] scale-75 opacity-50" />
             </div>
 
