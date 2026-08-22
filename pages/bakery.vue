@@ -5,6 +5,7 @@ import BakeryHero from '@/components/BakeryHero.vue';
 import BakeryProducts from '@/components/BakeryProducts.vue';
 import BakeryPhotoStrip from '@/components/BakeryPhotoStrip.vue';
 import BakeryReviews from '@/components/BakeryReviews.vue';
+import BakeryContact from '@/components/BakeryContact.vue';
 
 useSeoMeta({
     title: 'Normatisse Bakery — домашня випічка на замовлення',
@@ -34,6 +35,10 @@ useSeoMeta({
 
         <div class="pb-16">
             <BakeryReviews />
+        </div>
+
+        <div class="pb-16">
+            <BakeryContact />
         </div>
     </UContainer>
 </template>
