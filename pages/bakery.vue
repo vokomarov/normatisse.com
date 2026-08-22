@@ -2,6 +2,7 @@
 import BackgroundTop from '@/components/BackgroundTop.vue';
 import BackgroundBottom from '@/components/BackgroundBottom.vue';
 import BakeryHero from '@/components/BakeryHero.vue';
+import BakeryProducts from '@/components/BakeryProducts.vue';
 
 useSeoMeta({
     title: 'Normatisse Bakery — домашня випічка на замовлення',
@@ -19,6 +20,10 @@ useSeoMeta({
             <BackgroundTop />
             <BakeryHero />
             <BackgroundBottom />
+        </div>
+
+        <div id="products" class="relative z-0 pb-16">
+            <BakeryProducts />
         </div>
     </UContainer>
 </template>
