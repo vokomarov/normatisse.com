@@ -36,8 +36,13 @@ const { stop } = useIntersectionObserver(
                 >
 
                 <!-- Signature element, placement 4 (direction note §5): tucked behind
-                     this tile's corner, mirrored from the (future) Торти-card placement. -->
-                <div class="absolute -bottom-6 -right-6 -z-10" aria-hidden="true">
+                     this tile's corner, mirrored from the (future) Торти-card placement.
+                     Explicit h-44/w-44 on this wrapper matches SprinkleScatter's own root
+                     size — its svg root is itself `absolute`, so without a sized wrapper
+                     here the box collapses to 0 and bottom/right both being set resolves
+                     unpredictably (verified via agent-browser: it drifted down/right into
+                     tile 3's bounding box, fully hidden behind that tile's opaque photo). -->
+                <div class="absolute -bottom-6 -right-6 -z-10 h-44 w-44" aria-hidden="true">
                     <SprinkleScatter class="-scale-x-100 scale-50 opacity-45" />
                 </div>
             </div>

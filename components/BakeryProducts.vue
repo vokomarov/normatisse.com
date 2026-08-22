@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import SprinkleScatter from '@/components/SprinkleScatter.vue';
+
 interface ProductVariant {
     label: string;
     price: string;
@@ -114,7 +116,17 @@ const wrapperTransition = 'transition-all duration-150 ease-in-out hover:-transl
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- Торти — flagship showcase, stays level, anchors the layout -->
-            <div :class="['lg:col-span-7 lg:row-span-2 lg:self-start', wrapperTransition]">
+            <div :class="['relative lg:col-span-7 lg:row-span-2 lg:self-start', wrapperTransition]">
+                <!-- Placement 3 (direction note §5): small sprinkle cluster tucked behind the card's top-right corner.
+                     lg-only — on mobile the card is full-width, so the negative right offset would poke past the
+                     viewport edge and cause horizontal overflow. Explicit h-44/w-44 on this wrapper matches
+                     SprinkleScatter's own root size — its svg root is itself `absolute`, so without a sized wrapper
+                     here the box collapses to 0 and top/right both being set resolves unpredictably (verified via
+                     agent-browser: it drifted off over the neighbouring card instead of tucking behind this one). -->
+                <div class="hidden lg:block absolute -z-10 lg:-top-16 lg:-right-16 h-44 w-44" aria-hidden="true">
+                    <SprinkleScatter class="scale-50 opacity-40" />
+                </div>
+
                 <UCard :ui="cardUi">
                     <template #header>
                         <div class="aspect-[4/3] w-full bg-gradient-to-br from-watercourse-50 to-white">

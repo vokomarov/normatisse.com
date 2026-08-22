@@ -5,8 +5,8 @@ const INSTAGRAM_BAKERY_LINK = 'https://instagram.com/normatisse.bakery';
 
 <template>
     <div class="text-center">
-        <h2 class="logo-font text-3xl mb-4">Замовити</h2>
-        <p class="text-gray-500 mb-8">
+        <h2 class="logo-font text-3xl sm:text-4xl text-center mb-10">Замовити</h2>
+        <p class="text-gray-600 mb-8">
             Напишіть нам зручним способом — форма для онлайн-замовлень скоро зʼявиться.
         </p>
         <div class="flex flex-wrap items-center justify-center gap-4">
