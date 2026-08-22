@@ -17,6 +17,7 @@ const products: Product[] = [
     {
         slug: 'torty',
         name: 'Торти',
+        photo: '/images/bakery/gallery/torty.jpg',
         note: 'Конструктор — від 900 грн/кг',
         variants: [
             { label: 'Фісташка-малина', price: '900 грн/кг' },
@@ -36,6 +37,7 @@ const products: Product[] = [
     {
         slug: 'keksy',
         name: 'Кекси',
+        photo: '/images/bakery/gallery/keksy.jpg',
         note: 'Великі порційні, без «шапочки»',
         variants: [
             { label: 'Шоколадні, x9', price: '594 грн' },
@@ -51,6 +53,7 @@ const products: Product[] = [
     {
         slug: 'kapkeiky',
         name: 'Капкейки',
+        photo: '/images/bakery/gallery/kapkeiky.jpg',
         note: 'Шоколадні, ванільні, карамельні, лимонно-макові',
         variants: [
             { label: 'x12', price: '1020 грн' },
@@ -67,6 +70,7 @@ const products: Product[] = [
     {
         slug: 'madlen',
         name: 'Мадлен',
+        photo: '/images/bakery/gallery/madlen.jpg',
         note: 'Шоколадний, ванільний, кавовий, лимонно-маковий',
         variants: [
             { label: 'Без начинки, за шт', price: '40 грн' },
@@ -101,16 +105,16 @@ const tortyAccordionItems = [
 // Card surface lives on UCard itself via `ui.root` (a supported override, not a class
 // fight); rotation/hover transforms live on each card's outer wrapper div instead.
 const cardUi = { root: 'flex h-full flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-watercourse-100 shadow-sm', header: 'p-0 border-b-0' };
-const wrapperTransition = 'transition-all duration-150 ease-in-out hover:-translate-y-1 hover:shadow-md hover:ring-watercourse-300 rounded-2xl';
+const wrapperTransition = 'transition-all duration-150 ease-in-out hover:-translate-y-1 hover:shadow-md hover:ring-2 hover:ring-watercourse-300 rounded-2xl';
 </script>
 
 <template>
     <div>
         <h2 class="logo-font text-3xl sm:text-4xl text-center mb-10">Асортимент та ціни</h2>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-2 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- Торти — flagship showcase, stays level, anchors the layout -->
-            <div :class="['lg:col-span-7 lg:row-span-2', wrapperTransition]">
+            <div :class="['lg:col-span-7 lg:row-span-2 lg:self-start', wrapperTransition]">
                 <UCard :ui="cardUi">
                     <template #header>
                         <div class="aspect-[4/3] w-full bg-gradient-to-br from-watercourse-50 to-white">
