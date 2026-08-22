@@ -7,6 +7,8 @@ import BakeryPhotoStrip from '@/components/BakeryPhotoStrip.vue';
 import BakeryReviews from '@/components/BakeryReviews.vue';
 import BakeryContact from '@/components/BakeryContact.vue';
 
+const year = ref(new Date().getFullYear());
+
 useSeoMeta({
     title: 'Normatisse Bakery — домашня випічка на замовлення',
     ogTitle: 'Normatisse Bakery — домашня випічка на замовлення',
@@ -40,6 +42,9 @@ useSeoMeta({
         <div class="pb-16">
             <BakeryContact />
         </div>
+
+        <USeparator class="pt-10" />
+        <div class="text-center text-xs py-3">&copy; {{ year }} All rights reserved.</div>
     </UContainer>
 </template>
 

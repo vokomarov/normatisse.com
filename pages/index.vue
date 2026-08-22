@@ -3,7 +3,6 @@ import BackgroundTop from '@/components/BackgroundTop.vue';
 import BackgroundBottom from '@/components/BackgroundBottom.vue';
 
 const INSTAGRAM_LINK = 'https://instagram.com/normatisse';
-const INSTAGRAM_BAKERY_LINK = 'https://instagram.com/normatisse.bakery';
 const INSTAGRAM_PH_LINK = 'https://instagram.com/normatisse.ph';
 
 const year = ref(new Date().getFullYear());
@@ -39,16 +38,15 @@ useSeoMeta({
         </div>
 
         <div id="offers" class="relative z-0">
-            <a
+            <NuxtLink
                class="offer-card mb-6"
-               :href="INSTAGRAM_BAKERY_LINK"
-               target="_blank"
+               to="/bakery"
             >
                 <div class="p-4 sm:p-6">
                     <h2 class="sub-logo-font text-3xl">bakery</h2>
                     <p>Тортики, капкейки, горішки з начинкою, бенто-тортики, тістечка</p>
                 </div>
-            </a>
+            </NuxtLink>
 
             <a
                class="offer-card shadow-md mb-6"
