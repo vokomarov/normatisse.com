@@ -1,14 +1,22 @@
 <script setup lang="ts">
 const { instagram } = useBakeryContacts();
 
-// Screenshots are already cropped to their final pixels; the intrinsic height
-// varies per file, so they are served as-is rather than resized to one ratio.
-const reviews = [666, 490, 548, 601, 601].map((height, i) => ({
+// The rail needs one card height, so the screenshots are cropped to fill it.
+// `focus` is where the message text sits in each file — that is the part the crop
+// must keep; the product photo above or below it can go. The lightbox still shows
+// the whole screenshot.
+const reviews = [
+    { height: 666, focus: 'object-bottom' },
+    { height: 490, focus: 'object-top' },
+    { height: 548, focus: 'object-bottom' },
+    { height: 601, focus: 'object-top' },
+    { height: 601, focus: 'object-center' },
+].map((review, i) => ({
+    ...review,
     n: i + 1,
     src: `/images/bakery/reviews/review-${i + 1}.jpg`,
     alt: `Відгук клієнта ${i + 1}`,
     width: 414,
-    height,
 }));
 
 const activeIndex = ref<number | null>(null);
@@ -39,12 +47,13 @@ const activeIndex = ref<number | null>(null);
                 :style="{ '--reveal-delay': `${index * 60}ms` }"
                 @click="activeIndex = index"
             >
-                <!-- Contained, not cropped: the rail needs one card height, but a
-                     screenshot cut in half tells the reader nothing. -->
+                <!-- Cropped to the card on the rail, natural height in the masonry
+                     columns above `sm`, where each card sizes to its own image. -->
                 <img
                     :src="review.src"
                     :alt="review.alt"
-                    class="h-[26rem] w-full object-contain sm:h-auto"
+                    class="h-[26rem] w-full object-cover sm:h-auto"
+                    :class="review.focus"
                     :width="review.width"
                     :height="review.height"
                     loading="lazy"
