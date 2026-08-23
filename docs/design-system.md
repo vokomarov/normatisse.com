@@ -159,9 +159,16 @@ own padding, because the band is sized by the photo it has to show, not by the
 page's section rhythm.
 
 ```html
-<section class="brand-band flex min-h-[24rem] items-center py-14
-                sm:min-h-[28rem] sm:py-16 lg:min-h-[32rem] lg:py-20">
+<section class="brand-band flex min-h-[18rem] items-center py-15
+                sm:min-h-[20rem] sm:py-17 lg:min-h-[24rem] lg:py-20">
 ```
+
+**Keep `min-h` below the padded content height, or the padding is inert.** The
+band is a flex column centred on `items-center`, so whichever of `min-h` and
+`content + 2 × py` is larger wins and the other does nothing. When `min-h` wins,
+editing `py-*` changes nothing on screen — a silent no-op that looks like a
+caching problem. The values above are set so padding governs at every
+breakpoint; `min-h` is only a floor for how little photo the band may show.
 
 Three layers, in order:
 
@@ -187,7 +194,11 @@ and the scrim is then free to stay light. It also removes the failure mode of a
 scrim-only band, where the *average* luminance passes but the brightest pixel
 under the text does not.
 
-**`.brand-quote-line` contract.** The class carries padding — nothing else. No
+**`.brand-quote-line` contract.** The class carries padding, with
+`.brand-quote-line--note` as a tighter variant for the two supporting lines —
+nothing else. The tighter padding *has* to be a modifier class: a `py-*` utility
+at the call site loses, because the base class emits after Tailwind's utility
+layer (§3, cascade order). No
 `display`, no `width`, no colour, and deliberately **no border-radius and no
 shadow**: the bars stack flush in pairs, so rounded corners leave notches where
 the edges meet and a shadow lands on the bar below as a smudge rather than
@@ -196,32 +207,38 @@ is a flex column, so each bar hugs its own text, and the call site sets the fill
 and text colour. Setting `display` here would lose to the utility layer anyway
 (§3, cascade order).
 
-**Layout: two flush pairs, not four evenly-spaced lines.** Gap `0` inside a pair,
-`gap-5 sm:gap-6` between them, so the block reads as two statements rather than
-four fragments.
+**Layout: two flush pairs on the left gutter.** The quote spans the full
+`.brand-band__inner` width — the same container as every other section, so the
+band's copy lines up with the page rather than floating in a narrower column of
+its own. Both pairs are `items-start`, so all four bars start on the container's
+left gutter and the ragged right ends carry the shape. Gap `0` inside a pair,
+`gap-5 sm:gap-6` between them: the block reads as two statements, not four
+fragments.
 
-- **Claim + aside.** Wrapper is `flex flex-col items-start`, which sizes it to
-  the *longer* line — the claim. The aside then takes `self-end` plus an inset
-  (`mr-4 sm:mr-8 lg:mr-10`) so it hangs off the claim's right end without ever
-  reaching it. This depends on the claim staying the wider of the two at every
-  breakpoint; if the aside ever grows past it, the wrapper resizes to the aside
-  and the step inverts.
-- **The two notes.** Wrapper is `flex flex-col items-center` — both centred, so
-  the pair sits symmetric under the asymmetric one above it.
+Left-anchored, the block leaves the right half of the frame to the photograph.
+That is the trade — a centred or split arrangement uses the whole band, this one
+gives half of it back to the image.
 
 **Bar colour ladder**, descending in weight so the eye reads the lines in order,
 each ratio measured rather than eyeballed:
 
+Flat fills, no gradients. A gradient across a bar this small is invisible at
+reading distance and only muddies the fill's relationship to the photo behind
+it; it also means the bar's contrast is a range rather than a number.
+
 | Line | Fill | Text | Ratio |
 | --- | --- | --- | --- |
-| Claim | `from-white via-white to-blush-50` | `watercourse-800` | 6.9:1 |
-| Aside | `from-blush-600 to-blush-800` | `white` | 4.4–6.0:1 |
-| Notes (×2) | `watercourse-950/90 → watercourse-900/80` + `backdrop-blur-[2px]` | `--brand-on-deep` | ~14:1 |
+| Claim | `white` | `watercourse-800` | 6.9:1 |
+| Aside | `blush-700` | `white` | 6.0:1 |
+| Notes (×2) | `watercourse-950/85` + `backdrop-blur-[2px]` | `--brand-on-deep` | ≥8.4:1 |
 
 `blush-500` is the tempting fill for the aside and it fails — 3.1:1 against
-white. `blush-600` is the lightest pink that clears 4.5:1. The two note bars are
-translucent on purpose: at 80–90% with a 2px backdrop blur the photo still moves
-behind them, which is what keeps four stacked bars from reading as a solid panel.
+white. `blush-600` only reaches 4.3:1; `blush-700` is the first that clears
+AA with margin. The two note bars stay translucent on purpose: at 85% with a 2px
+backdrop blur the photo still moves behind them, which is what keeps four
+stacked bars from reading as a solid panel. Quote the translucent bar's ratio
+against its **worst** backdrop (pure white) — 8.4:1 here — not against the
+photo it happens to sit on today.
 
 **Copy shape.** One line per phrase, each in its own bar. Cap the mobile size of
 the longest line so it never wraps — at 390px the claim only fits unwrapped at

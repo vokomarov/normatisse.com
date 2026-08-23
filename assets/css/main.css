@@ -225,6 +225,13 @@ html {
     @apply px-5 py-2 sm:px-6 sm:py-2.5;
 }
 
+/* Tighter bar for the supporting notes, which sit at a smaller size. Has to be
+   a modifier, not a `py-*` utility at the call site: the base class emits after
+   Tailwind's utility layer and would win. */
+.brand-quote-line--note {
+    @apply py-1.5 sm:py-2;
+}
+
 /* Chip used for constructor options and product detail values. */
 .brand-chip {
     @apply inline-flex cursor-pointer items-center rounded-full bg-white px-3 py-1 text-sm ring-1 ring-watercourse-200/70;
