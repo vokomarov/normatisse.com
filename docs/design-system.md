@@ -151,8 +151,13 @@ the section box extends past the edge the reader actually sees. Measure to the
 ### Media bands
 
 A band whose background is a photograph rather than a surface token. One per
-page; on `/bakery` it is the manifesto, between the reviews and the order form.
+page; on `/bakery` it is the manifesto, between the hero and the price list.
 It is a pause, not a section — no heading, no CTA, just the quote.
+
+**Placement is constrained by §1, not by the narrative.** The manifesto answers
+"who is baking" and therefore wants to sit before the prices, but the binding
+rule is that it must not touch the dark gallery band. Hero → manifesto →
+products satisfies both; hero → products → manifesto → gallery would not.
 
 It does **not** use `<BrandSection>`: the vertical rhythm is a `min-h` plus its
 own padding, because the band is sized by the photo it has to show, not by the
@@ -323,6 +328,18 @@ Ghost is not a button. A secondary CTA that must read as an action uses
 `variant="outline"` — `ghost` renders as bare text until hovered and loses the
 padding the scale is there to guarantee.
 
+### Lists of equivalent actions
+
+A list where every row does the same job — the four contact channels — is the
+one place `ghost` is right, because the rows are a directory, not CTAs. But the
+list still has to answer *which one*: exactly one row carries `primary: true`
+in `useBakeryContacts()` and renders `color="primary" variant="soft"` with a
+blush note badge; the rest stay `ghost neutral`. Four equally weighted options
+at the last step of the page is a choice to make, not an action to take.
+
+The marking lives in the data, not the template. Moving the answer to a
+different channel is a one-line edit in the composable.
+
 ### Cursor and hover
 
 Tailwind v4 dropped the UA `cursor: pointer` on `<button>`. `main.css` restores
@@ -404,20 +421,48 @@ All three respect `prefers-reduced-motion: reduce`, as does `scroll-behavior`.
 - **`<BakerySprinkleField>`** — `density` (particles per 100k px²). Needs a
   positioned, clipping ancestor (`.brand-band` is one).
 - **`<BakeryManifesto>`** — the page's media band. No props: the photo, the copy
-  and the placement (after the reviews) are the component. See §3, *Media bands*.
+  and the placement (after the hero, before the price list) are the component.
+  See §3, *Media bands*.
+- **`<BakeryOrderBar>`** — mobile-only fixed order bar (`lg:hidden`, `z-40`).
+  Three IntersectionObservers' worth of state in two: it **arms** once `#products`
+  has been seen and then latches, and it is **suppressed** while `#hero` or
+  `#contact` is on screen. Arming latches because a bar that blinks off on every
+  upward scroll reads as a bug; suppression does not, because the bar must never
+  cover the thing it points at, and over the hero it only duplicates a CTA that
+  is already on screen. Bottom padding carries `env(safe-area-inset-bottom)`.
+  Requires those three `id`s to exist on the page — it silently no-ops otherwise.
 - **`<SprinkleScatter>`** — static SVG sprinkle motif. Fixed `44×44` root;
   position it with a sized wrapper, not with props.
 - **`<BakeryFooter>`** — page footer; anchors match the `id`s on `BrandSection`.
   The wordmark and the copyright-row link both go to `/` — a sub-brand page
   always offers a way back to the root site.
 - **`useBakeryContacts()`** — the single source of truth for the phone number,
-  the Instagram handle and the four contact channels (Instagram, Telegram, Viber,
-  phone). Contact section, footer, gallery CTA and reviews CTA all read from it.
-  Never hard-code a channel URL in a component.
+  the Instagram handle, the four contact channels (Instagram, Telegram, Viber,
+  phone) and `leadTime`. `leadTime` is how far ahead an order must be **placed**,
+  never how long the making takes — the product is made for the agreed date, and
+  copy that reads "готую за 3-5 днів" states the wrong promise. It is quoted in
+  the hero lead and above the order steps, not inside them.
+  Contact section, footer, gallery CTA and reviews CTA all read from it.
+  Never hard-code a channel URL or repeat the lead time in a component.
+  Exactly one channel carries `primary: true` — see §5, *Lists of equivalent
+  actions*.
 
 ---
 
 ## 8. Content structure
+
+### Copy rules that are factual, not stylistic
+
+- **«Готую», not «печу».** The range covers madeleines, gift sets and nut
+  assortments that are not baked. The baking verb is only correct for a specific
+  baked item; the general verb for the work is `готувати`. Same for headings —
+  «Що виходить із печі» was replaced for this reason.
+- **Lead time is when to *write*, not how long the making takes.** The product is
+  made for the agreed date. «Приймаю замовлення за 3-5 днів до дати» is right;
+  «Печу за 3-5 днів» promises a turnaround the bakery does not offer.
+- **Ask for the design and the item, not the headcount.** Step 01 and the
+  Telegram prefill collect date, occasion, what exactly, and wanted design.
+  Guest count is not what the quote is built from.
 
 The rule that fixed the "sections look too similar" problem: a product block
 separates three zones and never blends them.
@@ -433,6 +478,26 @@ separates three zones and never blends them.
    *values*, or the whole block collapses into one undifferentiated mass.
 
 Notes and caveats sit last, in `text-xs text-stone-500`.
+
+### Review cards — claim, then receipt
+
+A review card is a `<blockquote>` above the screenshot, never a screenshot
+alone and never an HTML speech bubble laid over one. The screenshots already
+contain the message bubble as pixels; a second bubble on top of it duplicates
+the same content in two renderings. Quote first because that is what a reader
+scans; screenshot under it because that is what makes the quote believable.
+
+- `quote` is a **verbatim** transcription, typos included. The section promises
+  screenshots «без редагування» — a tidied quote breaks that promise, and the
+  screenshot below it makes the edit visible anyway.
+- `caption` names the *order*, not the customer. These are anonymous Direct
+  messages; a plausible-sounding name would be fabricated.
+- `alt` describes the screenshot for someone who cannot see it. It is not a
+  second copy of the quote.
+- On the mobile rail the image is cropped to a single fixed height with a
+  per-item `object-*` anchor pointing at the message text; above `sm` it goes
+  `h-auto` and the masonry column absorbs the difference. The lightbox always
+  shows the whole file.
 
 ### Disclosure
 
@@ -483,5 +548,6 @@ whose label toggles with the state. The button carries `aria-expanded` and
   and drops the product photo on the other side. Above `sm` the cards are
   `h-auto` and none of this applies. The lightbox always shows the full image.
 - Page `<style>` blocks that re-`@import "tailwindcss"` ship a second Tailwind
-  build. Only `pages/index.vue` still does this, because its `.offer-card`
-  `@apply` depends on it.
+  build. Nothing does this any more — `pages/index.vue` was the last one and was
+  fixed in `cd3e047`. Do not reintroduce it to make an `@apply` resolve; move the
+  rule into `main.css` instead.

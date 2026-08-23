@@ -20,7 +20,7 @@ const activeIndex = ref<number | null>(null);
     <div>
         <header class="max-w-xl">
             <h2 class="brand-heading brand-heading--on-deep brand-reveal text-4xl sm:text-5xl">
-                Що виходить із печі
+                Що я готую
             </h2>
             <p class="brand-lead brand-lead--on-deep brand-reveal mt-4" style="--reveal-delay: 60ms">
                 Кожне замовлення виглядає інакше. Ось кілька останніх робіт — натисніть, щоб роздивитись.

@@ -5,6 +5,21 @@
 const PHONE = '+380734700263'
 const INSTAGRAM = 'https://instagram.com/normatisse.bakery'
 
+/**
+ * How far ahead the order has to be *placed* — not how long the making takes.
+ * The product is made for the agreed date. Quoted in the hero and above the steps.
+ */
+export const ORDER_LEAD_TIME = '3-5 днів'
+
+/**
+ * Prefills the first message with what step 01 asks for. Telegram honours
+ * `?text=` on username links and may drop it on phone-number links, in which
+ * case the chat just opens empty — the param is never harmful. Instagram
+ * supports no prefill at all and `viber://chat` takes no message parameter, so
+ * this only ever helps Telegram.
+ */
+const ORDER_PREFILL = 'Вітаю! Хочу замовити.\nДата: \nПривід: \nЩо саме: \nБажаний дизайн: '
+
 export interface ContactChannel {
     label: string
     value: string
@@ -12,6 +27,10 @@ export interface ContactChannel {
     to: string
     /** Opens in a new tab; app-scheme links (tel:, viber:) never do. */
     external: boolean
+    /** The channel answered first. Exactly one channel carries it. */
+    primary?: boolean
+    /** Shown next to the label on the primary row only. */
+    note?: string
 }
 
 const channels: ContactChannel[] = [
@@ -21,12 +40,14 @@ const channels: ContactChannel[] = [
         icon: 'i-simple-icons-instagram',
         to: INSTAGRAM,
         external: true,
+        primary: true,
+        note: 'Відповідаю найшвидше',
     },
     {
         label: 'Telegram',
         value: PHONE,
         icon: 'i-simple-icons-telegram',
-        to: `https://t.me/${PHONE}`,
+        to: `https://t.me/${PHONE}?text=${encodeURIComponent(ORDER_PREFILL)}`,
         external: true,
     },
     {
@@ -46,5 +67,5 @@ const channels: ContactChannel[] = [
 ]
 
 export function useBakeryContacts() {
-    return { phone: PHONE, instagram: INSTAGRAM, channels }
+    return { phone: PHONE, instagram: INSTAGRAM, channels, leadTime: ORDER_LEAD_TIME }
 }

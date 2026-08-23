@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { leadTime } = useBakeryContacts();
+
 const photoLayer = ref<HTMLElement | null>(null);
 const blobLayer = ref<HTMLElement | null>(null);
 
@@ -7,7 +9,7 @@ useParallax(blobLayer);
 </script>
 
 <template>
-    <section class="brand-band flex min-h-[86svh] items-center bg-[var(--brand-surface)] pt-16 pb-20 sm:pt-20 sm:pb-24 lg:pt-20 lg:pb-28">
+    <section id="hero" class="brand-band flex min-h-[86svh] items-center bg-[var(--brand-surface)] pt-16 pb-20 sm:pt-20 sm:pb-24 lg:pt-20 lg:pb-28">
         <!-- Ambient layer: mint/blush wash, blurred blob, then the brand's own
              sprinkles as live particles on top of both. -->
         <div class="pointer-events-none absolute inset-0" aria-hidden="true">
@@ -42,9 +44,11 @@ useParallax(blobLayer);
                         </span>
                     </h1>
 
+                    <!-- The three facts that decide whether a reader stays:
+                         what, how far ahead, and how it reaches them. -->
                     <p class="brand-lead mt-6 max-w-lg">
                         Домашні торти, кекси, капкейки та мадлен на замовлення у Вінниці.
-                        Печу під ваш смак і ваш привід.
+                        Приймаю замовлення за {{ leadTime }} до дати, самовивіз або доставка по місту.
                     </p>
 
                     <!-- Hero step of the button scale: one size above `xl`, same 1:3

@@ -6,6 +6,7 @@ import BakeryReviews from '@/components/BakeryReviews.vue';
 import BakeryManifesto from '@/components/BakeryManifesto.vue';
 import BakeryContact from '@/components/BakeryContact.vue';
 import BakeryFooter from '@/components/BakeryFooter.vue';
+import BakeryOrderBar from '@/components/BakeryOrderBar.vue';
 import BrandSection from '@/components/BrandSection.vue';
 
 const { siteUrl } = useRuntimeConfig().public;
@@ -88,14 +89,18 @@ useHead({
     <div class="bg-[var(--brand-surface)]">
         <BakeryHero />
 
+        <!-- Who is baking, before what it costs. It also keeps the photo band
+             clear of the dark gallery band: the two heavy devices must not sit
+             next to each other (design system §1, §3). -->
+        <BakeryManifesto />
+
         <BrandSection id="products" surface="mint">
             <BakeryProducts />
         </BrandSection>
 
         <!-- The page's single dark *surface*. Everything before and after it is
              light, so the flip reads as one deliberate accent rather than a
-             stripe pattern. The manifesto band below is a photograph, not a
-             surface flip — a different device, counted separately. -->
+             stripe pattern. -->
         <BrandSection id="gallery" surface="deep" curve-top>
             <BakeryGallery />
         </BrandSection>
@@ -104,12 +109,12 @@ useHead({
             <BakeryReviews />
         </BrandSection>
 
-        <BakeryManifesto />
-
         <BrandSection id="contact" surface="blush">
             <BakeryContact />
         </BrandSection>
 
         <BakeryFooter />
+
+        <BakeryOrderBar />
     </div>
 </template>
