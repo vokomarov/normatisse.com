@@ -65,16 +65,3 @@ useSeoMeta({
         </div>
     </UContainer>
 </template>
-
-<style lang="css">
-@import "tailwindcss";
-@import "@nuxt/ui";
-
-.subscribe-label {
-    @apply relative rounded-full px-3 py-1 text-sm/6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20;
-}
-
-.offer-card {
-    @apply block rounded-lg bg-elevated/50 hover:bg-elevated/90 transition-colors duration-150 ease-in-out hover:cursor-pointer ring ring-default divide-y divide-default shadow-md;
-}
-</style>

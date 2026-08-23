@@ -385,6 +385,18 @@ html {
     }
 }
 
+/* ==========================================================================
+   Homepage (index) — the hub page that links to the bakery and photography
+   ========================================================================== */
+
+.subscribe-label {
+    @apply relative rounded-full px-3 py-1 text-sm/6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20;
+}
+
+.offer-card {
+    @apply block rounded-lg bg-elevated/50 ring ring-default divide-y divide-default shadow-md transition-colors duration-150 ease-in-out hover:bg-elevated/90 hover:cursor-pointer;
+}
+
 /* Keyboard focus stays visible everywhere, including on image buttons. */
 .brand-focus:focus-visible {
     outline: 3px solid var(--color-blush-500);
