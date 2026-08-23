@@ -54,8 +54,10 @@ const activeIndex = ref<number | null>(null);
         </div>
 
         <!-- CTA closes the band: the mosaic is the content, Instagram is where it
-             continues. -->
-        <div class="brand-reveal mt-16 flex justify-center sm:mt-20 lg:mt-24">
+             continues. Top gap matches the *visible* bottom gap, which is the
+             band padding minus the next band's curve overlap: 80-40, 96-56,
+             128-56. -->
+        <div class="brand-reveal mt-10 flex justify-center lg:mt-18">
             <UButton
                 icon="i-simple-icons-instagram"
                 color="secondary"

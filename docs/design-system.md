@@ -110,14 +110,25 @@ A band that ends with a call to action puts it **after** the content, centred,
 never inline with the heading:
 
 ```html
-<div class="brand-reveal mt-16 flex justify-center sm:mt-20 lg:mt-24"> … </div>
+<div class="brand-reveal mt-10 flex justify-center lg:mt-18"> … </div>
 ```
 
-`mt-16 / 20 / 24` is the gap between the last content row and the CTA. The gap
-below it is whatever `<BrandSection>` already pays (`py-20 sm:py-24 lg:py-32`),
-so the two rarely match: trim the difference with a negative bottom margin on the
-CTA wrapper until the button reads as vertically centred between the content and
-the band edge. Reviews needs `-mb-2 lg:-mb-8` to land at 96px above / 96px below.
+**40 / 40 / 72px, above and below.** The top gap is the `mt`; the bottom gap is
+*not* the band padding — it is the band padding minus whatever the next band
+curves over it:
+
+| | band `pb` | curve overlap | visible gap |
+|---|---|---|---|
+| base | `py-20` → 80 | `-mt-10` → 40 | 40 |
+| `sm` | `py-24` → 96 | `-mt-14` → 56 | 40 |
+| `lg` | `py-32` → 128 | `-mt-14` → 56 | 72 |
+
+A band followed by a `curve-top` band (the gallery) gets that subtraction for
+free and needs only the `mt`. A band followed by a flat one (the reviews) has to
+fake it with `-mb-10 sm:-mb-14` on the CTA wrapper. Measuring against
+`section.getBoundingClientRect().bottom` is what hides this — the curve means
+the section box extends past the edge the reader actually sees. Measure to the
+*next* section's top instead.
 
 ### Horizontal rails (mobile carousels)
 
@@ -133,7 +144,9 @@ still align its first card with the heading above it.
 `.brand-rail` contract:
 
 - Scrollbar hidden, `overscroll-x-contain`, `snap-x snap-mandatory`,
-  `scroll-padding-inline` set to the gutter.
+  `scroll-padding-inline` set to the gutter. The track's `pb-2` is scroll
+  breathing room only — the `--from-*` modifiers reset it to `0`, or it shows up
+  as 8px of phantom space under a desktop grid.
 - Children get `w-[82%] max-w-sm shrink-0 snap-start` — the 18% remainder is the
   peek that tells the reader the row scrolls. No arrows; dots do the signalling.
 - The class sets **no `display`**. Same emit-order trap as `.brand-card`: a

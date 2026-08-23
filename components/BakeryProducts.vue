@@ -173,7 +173,7 @@ const isBuilderOpen = ref(false);
     <div>
         <header class="max-w-2xl">
             <h2 class="brand-heading brand-reveal text-4xl sm:text-5xl lg:text-[3.25rem]">
-                Асортимент і ціни
+                Асортимент
             </h2>
             <p class="brand-lead brand-reveal mt-4" style="--reveal-delay: 60ms">
                 Кожна позиція печеться під замовлення. Наперед бронюйте дату, особливо на вихідні.

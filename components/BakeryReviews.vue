@@ -53,9 +53,10 @@ const activeIndex = ref<number | null>(null);
             </button>
         </BrandRail>
 
-        <!-- Negative bottom margin trims the band padding so the CTA reads as
-             vertically centred between the cards and the section edge. -->
-        <div class="brand-reveal mt-16 -mb-2 flex justify-center sm:mt-20 lg:mt-24 lg:-mb-8">
+        <!-- Same gaps as the gallery CTA. Nothing curves over this band, so the
+             negative bottom margin has to stand in for the overlap the gallery
+             gets for free. -->
+        <div class="brand-reveal mt-10 -mb-10 flex justify-center sm:-mb-14 lg:mt-18">
             <UButton
                 icon="i-simple-icons-instagram"
                 color="primary"

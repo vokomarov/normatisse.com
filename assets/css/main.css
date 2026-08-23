@@ -270,6 +270,8 @@ html {
         gap: 1.5rem;
         margin-inline: 0;
         padding-inline: 0;
+        /* Scroll-track breathing room; dead space once it stops scrolling. */
+        padding-bottom: 0;
         overflow: visible;
     }
 
@@ -283,6 +285,8 @@ html {
         gap: 1.5rem;
         margin-inline: 0;
         padding-inline: 0;
+        /* Scroll-track breathing room; dead space once it stops scrolling. */
+        padding-bottom: 0;
         overflow: visible;
     }
 
