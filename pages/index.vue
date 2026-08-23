@@ -2,7 +2,6 @@
 import BackgroundTop from '@/components/BackgroundTop.vue';
 import BackgroundBottom from '@/components/BackgroundBottom.vue';
 
-const INSTAGRAM_LINK = 'https://instagram.com/normatisse';
 const INSTAGRAM_PH_LINK = 'https://instagram.com/normatisse.ph';
 
 const year = ref(new Date().getFullYear());

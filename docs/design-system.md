@@ -81,6 +81,13 @@ but any long Cyrillic string belongs in Onest.
 Italic display type needs descender room: keep `leading-[1.15]` and a `pb-1`
 reserve on any wrapper (see the hero's `make day sweeter`).
 
+**Josefin has no tabular figures.** Any vertical list numbered in the display
+face (the contact steps, any future ordered list) must put the numeral in a
+fixed-width grid column — `grid grid-cols-[2.5rem_1fr]` — not in a flex row with
+a gap. With a gap, `01` sits a few pixels off `02` and the ragged left edge is
+visible. Match the numeral's `leading-8` to the first text line so the baselines
+agree.
+
 ---
 
 ## 3. Layout
@@ -96,6 +103,44 @@ padding — `<BrandSection>` owns vertical rhythm (`py-20 sm:py-24 lg:py-32`) an
 the surface. Pass `curve-top` to round a band over the previous one.
 
 Grid over flex math. Full-height sections use `min-h-[…svh]`, never `h-screen`.
+
+### Section-closing CTA
+
+A band that ends with a call to action puts it **after** the content, centred,
+never inline with the heading:
+
+```html
+<div class="brand-reveal mt-16 flex justify-center sm:mt-20 lg:mt-24"> … </div>
+```
+
+`mt-16 / 20 / 24` is the gap between the last content row and the CTA. The gap
+below it is whatever `<BrandSection>` already pays (`py-20 sm:py-24 lg:py-32`),
+so the two rarely match: trim the difference with a negative bottom margin on the
+CTA wrapper until the button reads as vertically centred between the content and
+the band edge. Reviews needs `-mb-2 lg:-mb-8` to land at 96px above / 96px below.
+
+### Horizontal rails (mobile carousels)
+
+Below the hand-over breakpoint, any multi-card row becomes a scroll-snap rail
+instead of a stacked column. Cards stacked vertically on a phone bury everything
+after the second one; a rail keeps the set scannable and signals "there is more"
+through the peeking next card.
+
+`--brand-rail-gutter` mirrors `.brand-band__inner`'s padding (`1.25 / 2 / 2.5rem`)
+so `.brand-rail` can bleed to the band edge with a negative inline margin and
+still align its first card with the heading above it.
+
+`.brand-rail` contract:
+
+- Scrollbar hidden, `overscroll-x-contain`, `snap-x snap-mandatory`,
+  `scroll-padding-inline` set to the gutter.
+- Children get `w-[82%] max-w-sm shrink-0 snap-start` — the 18% remainder is the
+  peek that tells the reader the row scrolls. No arrows; dots do the signalling.
+- The class sets **no `display`**. Same emit-order trap as `.brand-card`: a
+  `lg:grid` on the element would lose to it. `<BrandRail>` owns `display`.
+- The hand-over is a modifier — `--from-sm` or `--from-lg` — because the
+  breakpoint at which the rail stops must equal the breakpoint at which the
+  desktop layout starts. Mismatch it and the rail keeps scrolling under a grid.
 
 ---
 
@@ -123,7 +168,57 @@ element will not override them. Add a modifier class instead.
 
 ---
 
-## 5. Motion
+## 5. Action elements
+
+### Button scale
+
+One rule governs every button: **padding-y : padding-x is always 1:3.** The
+sizes in `app.config.ts` are the only approved steps.
+
+| Size | Padding | Text | Used for |
+|---|---|---|---|
+| `xs` | `px-3 py-1` | `text-xs` | inline, rare |
+| `sm` | `px-[1.125rem] py-1.5` | `text-xs` | dense rows |
+| `md` | `px-6 py-2` | `text-sm` | default |
+| `lg` | `px-[1.875rem] py-2.5` | `text-sm` | the 10/30 baseline — most CTAs |
+| `xl` | `px-9 py-3` | `text-base` | section-closing CTAs |
+| hero | `sm:px-12 sm:py-3.5 sm:text-lg` | — | the two hero buttons only |
+
+The hero step is a class on the element rather than a sixth size: it exists in
+exactly one place, and a named size invites reuse. Keep the ratio if it moves.
+
+The `square` compound variant in Nuxt UI emits `p-*` after the size variants, so
+icon-only buttons (`square`) stay square without touching this scale.
+
+Ghost is not a button. A secondary CTA that must read as an action uses
+`variant="outline"` — `ghost` renders as bare text until hovered and loses the
+padding the scale is there to guarantee.
+
+### Cursor and hover
+
+Tailwind v4 dropped the UA `cursor: pointer` on `<button>`. `main.css` restores
+it globally:
+
+```css
+button:not(:disabled):not([aria-disabled='true']),
+[role='button']:not([aria-disabled='true']),
+summary { cursor: pointer; }
+```
+
+Every action element also changes background on hover, guarded by
+`@media (hover: hover)` so touch devices never latch a hover state. Images that
+open a lightbox use `cursor-zoom-in` instead, plus a `bg-watercourse-950/25`
+scrim on hover.
+
+`.brand-chip` carries `cursor-pointer` and a hover background. **This is a
+deliberate exception, and a lie:** the chips are static text, not controls. It is
+in the system because the client asked for it. If the chips ever become
+filters, this becomes correct; until then, do not copy the pattern to other
+non-interactive text.
+
+---
+
+## 6. Motion
 
 | Token | Value |
 |---|---|
@@ -152,33 +247,66 @@ All three respect `prefers-reduced-motion: reduce`, as does `scroll-behavior`.
 
 ---
 
-## 6. Component contracts
+## 7. Component contracts
 
 - **`<BrandSection>`** — `surface`, `curve-top`, `id`. Wrap every section in it.
+- **`<BrandRail>`** — mobile carousel. `from` (`sm` | `lg`) and `desktop` (the
+  layout classes that take over) **must name the same breakpoint**; that pairing
+  is the whole contract. `label` names the scroll region. The component measures
+  overflow with a `ResizeObserver` and only then adds `role="group"`,
+  `tabindex="0"` and the dot indicators — a rail that fits gets no ARIA noise.
+  Dots are position indicators *and* controls (click scrolls to the slide).
+- **`<BrandLightbox>`** — `items` (`{src, alt, width?, height?}`), `v-model:index`
+  (`null` = closed), `title`. Prev/next, counter and arrow keys appear only when
+  there is more than one item. Every clickable image on the site opens this, not
+  a section-local modal.
 - **`<BakerySprinkleField>`** — `density` (particles per 100k px²). Needs a
   positioned, `overflow-hidden` ancestor.
 - **`<SprinkleScatter>`** — static SVG sprinkle motif. Fixed `44×44` root;
   position it with a sized wrapper, not with props.
 - **`<BakeryFooter>`** — page footer; anchors match the `id`s on `BrandSection`.
+  The wordmark and the copyright-row link both go to `/` — a sub-brand page
+  always offers a way back to the root site.
+- **`useBakeryContacts()`** — the single source of truth for the phone number,
+  the Instagram handle and the four contact channels (Instagram, Telegram, Viber,
+  phone). Contact section, footer, gallery CTA and reviews CTA all read from it.
+  Never hard-code a channel URL in a component.
 
 ---
 
-## 7. Content structure
+## 8. Content structure
 
 The rule that fixed the "sections look too similar" problem: a product block
 separates three zones and never blends them.
 
 1. **Identity** — name + one lead line. No prices, no option lists.
 2. **Price** — on its own `.brand-panel` surface, as a `<dl>` of label/value
-   rows, optionally grouped (`Поштучно` / `Асорті`).
+   rows, optionally grouped (`Поштучно` / `Асорті`). A priced item that has a
+   composition carries a one-sentence description under the row; the price
+   without the recipe is not enough to choose from.
 3. **Options** — a labelled `<dl>` where values render as `.brand-chip`s, never
-   as prose. Long option sets go behind a `UAccordion`.
+   as prose. Groups are separated by `space-y-7`, chips inside a group by
+   `gap-x-3 gap-y-2.5`: option *types* must read as further apart than option
+   *values*, or the whole block collapses into one undifferentiated mass.
 
 Notes and caveats sit last, in `text-xs text-stone-500`.
 
+### Disclosure
+
+A long option set is hidden behind a `UCollapsible` with
+`:unmount-on-hide="false"` (content stays in the DOM as `hidden="until-found"`,
+so it is findable and `aria-controls` stays valid).
+
+**Open it with a CTA, not an accordion header.** An accordion row reads as
+"there is more of the same below"; a titled invitation plus a button reads as
+"here is a different thing you can do". The cakes constructor uses the second,
+on a `bg-blush-50` panel — heading, one line of copy, then a `size="lg"` button
+whose label toggles with the state. The button carries `aria-expanded` and
+`aria-controls`.
+
 ---
 
-## 8. Gotchas
+## 9. Gotchas
 
 - **Never name a slot `constructor`.** Vue resolves `$slots.constructor` to
   `Object.prototype.constructor`, so `item.slot && !!slots[item.slot]` is truthy
@@ -190,6 +318,10 @@ Notes and caveats sit last, in `text-xs text-stone-500`.
 - **Pre-cropped screenshots** (reviews) use a plain `<img>` with their real
   intrinsic height. Running them through `NuxtImg` with a single fixed
   width/height crops them to one ratio.
+- **Never `object-cover` a screenshot.** A rail needs one uniform card height,
+  but these images lead with a product photo and carry the text at the bottom,
+  so cropping to a fixed height hides the only content that matters. Use
+  `h-[26rem] object-contain sm:h-auto` and let the lightbox show the full image.
 - Page `<style>` blocks that re-`@import "tailwindcss"` ship a second Tailwind
   build. Only `pages/index.vue` still does this, because its `.offer-card`
   `@apply` depends on it.

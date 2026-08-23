@@ -31,17 +31,38 @@ interface Product {
 
 // Торти is the flagship: it is the only line with a build-your-own path, so it
 // gets its own feature block rather than a slot in the card grid.
+// Flavour compositions come from the Instagram pricing carousel.
 const torty = {
     name: 'Торти',
     lead: 'Бісквітні торти на замовлення. Візьміть один із готових смаків або зберіть свій.',
     photo: '/images/bakery/gallery/torty.jpg',
     from: 'від 850 грн/кг',
     flavours: [
-        { label: 'Фісташка і малина', price: '900 грн/кг' },
-        { label: 'Кава і Бейліс', price: '900 грн/кг' },
-        { label: 'Вишня і шоколад', price: '850 грн/кг' },
-        { label: 'Кокос і малина', price: '850 грн/кг' },
-        { label: 'Ягідний мікс', price: '850 грн/кг' },
+        {
+            label: 'Фісташка і малина',
+            price: '900 грн/кг',
+            description: 'Фісташковий бісквіт, крем-чіз на вершках з фісташковою пастою, малиновий мус, малиновий конфі з фісташковим ганашем.',
+        },
+        {
+            label: 'Кава і Бейліс',
+            price: '900 грн/кг',
+            description: 'Кавовий бісквіт, кавовий крем-чіз на вершках, мус на основі білого шоколаду з лікером Бейліс, ганаш Бейліс.',
+        },
+        {
+            label: 'Вишня і шоколад',
+            price: '850 грн/кг',
+            description: 'Шоколадний бісквіт, крем-чіз на вершках з темним шоколадом, вишневий мус, вишневий конфі.',
+        },
+        {
+            label: 'Кокос і малина',
+            price: '850 грн/кг',
+            description: 'Кокосовий бісквіт, крем-чіз на вершках, малиновий мус, малиновий конфі, кокосовий ганаш.',
+        },
+        {
+            label: 'Ягідний мікс',
+            price: '850 грн/кг',
+            description: 'Ванільний бісквіт, крем-чіз на вершках, ягідний мус, ягідний конфі.',
+        },
     ],
     builder: [
         { term: 'Бісквіт', values: ['ванільний', 'шоколадний', 'кавовий', 'кокосовий', 'лимонний'] },
@@ -143,10 +164,9 @@ const products: Product[] = [
     },
 ];
 
-// `slot: 'builder'`, never 'constructor': Vue resolves $slots.constructor to
-// Object.prototype.constructor, so an accordion item with that slot name renders
-// an empty panel that never opens.
-const builderItems = [{ label: 'Зібрати свій торт', value: 'builder', slot: 'builder' as const }];
+// The constructor is opened by its own CTA rather than an accordion header, so
+// the invitation to build a cake reads as an action, not as a disclosure row.
+const isBuilderOpen = ref(false);
 </script>
 
 <template>
@@ -178,60 +198,88 @@ const builderItems = [{ label: 'Зібрати свій торт', value: 'build
                 </p>
             </div>
 
-            <div class="flex min-w-0 flex-1 flex-col gap-7 p-6 sm:p-8 lg:p-10">
+            <div class="flex min-w-0 flex-1 flex-col gap-8 p-6 sm:p-8 lg:p-10">
                 <!-- Zone 1: identity -->
                 <div>
                     <h3 class="brand-heading text-3xl sm:text-4xl">{{ torty.name }}</h3>
                     <p class="brand-lead mt-2">{{ torty.lead }}</p>
                 </div>
 
-                <!-- Zone 2: prices, on their own surface -->
+                <!-- Zone 2: prices, on their own surface. Each flavour carries its
+                     composition, so the price row is never a bare label. -->
                 <div class="brand-panel p-5 sm:p-6">
                     <p class="brand-term">Готові смаки</p>
-                    <dl class="mt-3 space-y-0.5">
+                    <dl class="mt-4 space-y-4">
                         <div
                             v-for="flavour in torty.flavours"
                             :key="flavour.label"
-                            class="flex items-baseline justify-between gap-4 border-b border-watercourse-100 py-2.5 last:border-b-0 last:pb-0"
+                            class="border-b border-watercourse-100 pb-4 last:border-b-0 last:pb-0"
                         >
-                            <dt class="min-w-0 text-sm text-stone-700 sm:text-base">{{ flavour.label }}</dt>
-                            <dd class="brand-price text-lg sm:text-xl">{{ flavour.price }}</dd>
+                            <div class="flex items-baseline justify-between gap-4">
+                                <dt class="min-w-0 font-semibold text-watercourse-900">{{ flavour.label }}</dt>
+                                <dd class="brand-price text-lg sm:text-xl">{{ flavour.price }}</dd>
+                            </div>
+                            <dd class="mt-1.5 text-sm leading-relaxed text-stone-600">{{ flavour.description }}</dd>
                         </div>
                     </dl>
                 </div>
 
-                <!-- Zone 3: options, as labelled chips rather than prose -->
-                <UAccordion
-                    :items="builderItems"
-                    default-value="builder"
-                    :ui="{
-                        item: 'border-t border-b-0 border-watercourse-100 pt-1',
-                        trigger: 'text-base font-semibold text-watercourse-800 py-4',
-                        body: 'pb-1',
-                    }"
-                >
-                    <template #builder-body>
-                        <dl class="space-y-4">
-                            <div v-for="group in torty.builder" :key="group.term">
-                                <dt class="brand-term">{{ group.term }}</dt>
-                                <dd class="mt-2 flex flex-wrap gap-1.5">
-                                    <span v-for="value in group.values" :key="value" class="brand-chip">{{ value }}</span>
-                                </dd>
+                <!-- Zone 3: the build-your-own path, opened by its own CTA -->
+                <div>
+                    <div class="rounded-[var(--brand-radius-inner)] bg-blush-50 p-5 ring-1 ring-blush-100 sm:p-6">
+                        <p class="font-display text-xl font-bold text-watercourse-800 sm:text-2xl">
+                            Не знайшли свій смак?
+                        </p>
+                        <p class="mt-1.5 text-sm leading-relaxed text-stone-600">
+                            Зберіть торт з нуля: бісквіт, мус, начинка, крем і покриття — на ваш вибір.
+                        </p>
+                        <UButton
+                            class="mt-5"
+                            color="secondary"
+                            variant="solid"
+                            size="lg"
+                            :icon="isBuilderOpen ? 'i-lucide-chevron-up' : 'i-lucide-wand-sparkles'"
+                            :aria-expanded="isBuilderOpen"
+                            aria-controls="cake-builder"
+                            @click="isBuilderOpen = !isBuilderOpen"
+                        >
+                            {{ isBuilderOpen ? 'Згорнути конструктор' : 'Зібрати свій торт' }}
+                        </UButton>
+                    </div>
+
+                    <!-- Kept mounted: the constructor is the page's richest copy
+                         and should stay in the DOM for search and for aria-controls. -->
+                    <UCollapsible v-model:open="isBuilderOpen" :unmount-on-hide="false">
+                        <template #content>
+                            <div id="cake-builder" class="pt-7">
+                                <dl class="space-y-7">
+                                    <div v-for="group in torty.builder" :key="group.term">
+                                        <dt class="brand-term">{{ group.term }}</dt>
+                                        <dd class="mt-2.5 flex flex-wrap gap-x-3 gap-y-2.5">
+                                            <span v-for="value in group.values" :key="value" class="brand-chip">{{ value }}</span>
+                                        </dd>
+                                    </div>
+                                </dl>
+                                <p class="mt-6 text-sm leading-relaxed text-stone-500">{{ torty.builderNote }}</p>
                             </div>
-                        </dl>
-                        <p class="mt-5 text-sm leading-relaxed text-stone-500">{{ torty.builderNote }}</p>
-                    </template>
-                </UAccordion>
+                        </template>
+                    </UCollapsible>
+                </div>
             </div>
         </article>
 
-        <!-- Catalogue grid: same three zones, compact. -->
-        <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:mt-8 lg:grid-cols-3">
+        <!-- Catalogue grid: same three zones, compact. Below `lg` it is a
+             scroll-snap rail so the cards keep a readable width on phones. -->
+        <BrandRail
+            class="brand-reveal mt-6 lg:mt-8"
+            from="sm"
+            desktop="sm:grid sm:grid-cols-2 lg:grid-cols-3"
+            label="Інші позиції"
+        >
             <article
-                v-for="(product, index) in products"
+                v-for="product in products"
                 :key="product.slug"
-                class="brand-card brand-reveal flex-col"
-                :style="{ '--reveal-delay': `${index * 80}ms` }"
+                class="brand-card flex-col"
             >
                 <div class="relative">
                     <NuxtImg
@@ -248,7 +296,7 @@ const builderItems = [{ label: 'Зібрати свій торт', value: 'build
                     </p>
                 </div>
 
-                <div class="flex flex-1 flex-col gap-5 p-5 sm:p-6">
+                <div class="flex flex-1 flex-col gap-6 p-5 sm:p-6">
                     <div>
                         <h3 class="brand-heading text-2xl">{{ product.name }}</h3>
                         <p class="mt-1.5 text-sm leading-relaxed text-stone-600">{{ product.lead }}</p>
@@ -273,10 +321,10 @@ const builderItems = [{ label: 'Зібрати свій торт', value: 'build
                         </div>
                     </div>
 
-                    <dl class="space-y-3">
+                    <dl class="space-y-5">
                         <div v-for="group in product.details" :key="group.term">
                             <dt class="brand-term">{{ group.term }}</dt>
-                            <dd class="mt-1.5 flex flex-wrap gap-1.5">
+                            <dd class="mt-2.5 flex flex-wrap gap-x-3 gap-y-2.5">
                                 <span v-for="value in group.values" :key="value" class="brand-chip">{{ value }}</span>
                             </dd>
                         </div>
@@ -285,9 +333,9 @@ const builderItems = [{ label: 'Зібрати свій торт', value: 'build
                     <p v-if="product.note" class="mt-auto text-xs leading-relaxed text-stone-500">{{ product.note }}</p>
                 </div>
             </article>
-        </div>
+        </BrandRail>
 
-        <div class="pointer-events-none absolute -right-10 top-1/3 hidden h-44 w-44 lg:block" aria-hidden="true">
+        <div class="pointer-events-none absolute top-1/3 -right-10 hidden h-44 w-44 lg:block" aria-hidden="true">
             <SprinkleScatter class="scale-90 opacity-50" />
         </div>
     </div>

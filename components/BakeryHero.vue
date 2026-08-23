@@ -40,11 +40,25 @@ useParallax(blobLayer);
                         Печу під ваш смак і ваш привід.
                     </p>
 
+                    <!-- Hero step of the button scale: one size above `xl`, same 1:3
+                         padding ratio. -->
                     <div class="mt-9 flex flex-wrap items-center gap-3">
-                        <UButton size="xl" color="primary" variant="solid" to="#products">
+                        <UButton
+                            class="sm:px-12 sm:py-3.5 sm:text-lg"
+                            size="xl"
+                            color="primary"
+                            variant="solid"
+                            to="#products"
+                        >
                             Дивитись асортимент
                         </UButton>
-                        <UButton size="xl" color="primary" variant="ghost" to="#contact">
+                        <UButton
+                            class="sm:px-12 sm:py-3.5 sm:text-lg"
+                            size="xl"
+                            color="primary"
+                            variant="outline"
+                            to="#contact"
+                        >
                             Замовити
                         </UButton>
                     </div>

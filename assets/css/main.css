@@ -75,6 +75,29 @@
        ~2.2:1 (primary) and ~3.0:1 (secondary). Darker steps clear WCAG AA. */
     --ui-primary: var(--color-watercourse-800);
     --ui-secondary: var(--color-blush-600);
+
+    /* Mirrors .brand-band__inner padding so a rail can bleed to the band edge. */
+    --brand-rail-gutter: 1.25rem;
+}
+
+@media (min-width: 40rem) {
+    :root {
+        --brand-rail-gutter: 2rem;
+    }
+}
+
+@media (min-width: 64rem) {
+    :root {
+        --brand-rail-gutter: 2.5rem;
+    }
+}
+
+/* Tailwind v4 leaves <button> at cursor:default. Every action element in the
+   brand reads as clickable. */
+button:not(:disabled):not([aria-disabled='true']),
+[role='button']:not([aria-disabled='true']),
+summary {
+    cursor: pointer;
 }
 
 /* In-page anchors land below the band's top edge, not flush against it. */
@@ -184,13 +207,83 @@ html {
 
 /* Chip used for constructor options and product detail values. */
 .brand-chip {
-    @apply inline-flex items-center rounded-full bg-white px-3 py-1 text-sm ring-1 ring-watercourse-200/70;
+    @apply inline-flex cursor-pointer items-center rounded-full bg-white px-3 py-1 text-sm ring-1 ring-watercourse-200/70;
     color: var(--color-stone-700, #44403c);
+    transition: background-color var(--brand-duration-fast) var(--brand-ease),
+                box-shadow var(--brand-duration-fast) var(--brand-ease),
+                color var(--brand-duration-fast) var(--brand-ease);
+}
+
+@media (hover: hover) {
+    .brand-chip:hover {
+        @apply bg-watercourse-50 ring-watercourse-400;
+        color: var(--color-watercourse-800);
+    }
+
+    .brand-chip--on-deep:hover {
+        @apply bg-white/20 ring-white/40;
+        color: #ffffff;
+    }
 }
 
 .brand-chip--on-deep {
     @apply bg-white/10 ring-white/15;
     color: var(--brand-on-deep);
+}
+
+/* ==========================================================================
+   Horizontal rail
+   Mobile carousel primitive: scroll-snap track that peeks the next card so the
+   overflow is visible without a scrollbar. Becomes a static grid at `lg`
+   through the `desktop` class passed to <BrandRail>.
+   ========================================================================== */
+
+/* No `display` here: this class is emitted after Tailwind's utility layer, so a
+   `lg:grid` on the element would lose to it. <BrandRail> owns display. */
+.brand-rail {
+    @apply snap-x snap-mandatory overflow-x-auto overscroll-x-contain pb-2;
+    gap: 1rem;
+    scrollbar-width: none;
+    /* Bleeds to the band edges so the peeking card is not clipped by the gutter. */
+    margin-inline: calc(var(--brand-rail-gutter) * -1);
+    padding-inline: var(--brand-rail-gutter);
+    scroll-padding-inline: var(--brand-rail-gutter);
+}
+
+.brand-rail::-webkit-scrollbar {
+    display: none;
+}
+
+.brand-rail > * {
+    @apply w-[82%] max-w-sm shrink-0 snap-start;
+}
+
+/* Hand-over point: past it the rail stops scrolling and the `desktop` classes on
+   the same element take over. <BrandRail from="sm|lg"> picks the modifier. */
+@media (min-width: 40rem) {
+    .brand-rail--from-sm {
+        gap: 1.5rem;
+        margin-inline: 0;
+        padding-inline: 0;
+        overflow: visible;
+    }
+
+    .brand-rail--from-sm > * {
+        @apply w-auto max-w-none;
+    }
+}
+
+@media (min-width: 64rem) {
+    .brand-rail--from-lg {
+        gap: 1.5rem;
+        margin-inline: 0;
+        padding-inline: 0;
+        overflow: visible;
+    }
+
+    .brand-rail--from-lg > * {
+        @apply w-auto max-w-none;
+    }
 }
 
 /* ==========================================================================

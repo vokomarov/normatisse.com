@@ -1,37 +1,5 @@
 <script setup lang="ts">
-const CONTACT_PHONE = '+380734700263';
-const INSTAGRAM_BAKERY_LINK = 'https://instagram.com/normatisse.bakery';
-
-const channels = [
-    {
-        label: 'Instagram Direct',
-        value: '@normatisse.bakery',
-        icon: 'i-simple-icons-instagram',
-        to: INSTAGRAM_BAKERY_LINK,
-        external: true,
-    },
-    {
-        label: 'Telegram',
-        value: CONTACT_PHONE,
-        icon: 'i-simple-icons-telegram',
-        to: `https://t.me/${CONTACT_PHONE}`,
-        external: true,
-    },
-    {
-        label: 'Viber',
-        value: CONTACT_PHONE,
-        icon: 'i-simple-icons-viber',
-        to: `viber://chat?number=%2B${CONTACT_PHONE.replace('+', '')}`,
-        external: false,
-    },
-    {
-        label: 'Телефон',
-        value: CONTACT_PHONE,
-        icon: 'i-lucide-phone',
-        to: `tel:${CONTACT_PHONE}`,
-        external: false,
-    },
-];
+const { channels } = useBakeryContacts();
 
 // Real sequence, so the numbering carries meaning rather than decoration.
 const steps = [
@@ -49,13 +17,15 @@ const steps = [
                 Пишіть будь-яким зручним способом. Відповідаю особисто, зазвичай протягом дня.
             </p>
 
+            <!-- Fixed-width numeral column: Josefin has no tabular figures, so a
+                 flex gap would leave "01" a few pixels off the rows below it. -->
             <ol class="brand-reveal mt-10 space-y-6" style="--reveal-delay: 120ms">
-                <li v-for="(step, index) in steps" :key="step.title" class="flex gap-4">
-                    <span class="mt-0.5 shrink-0 font-display text-2xl font-bold tabular-nums text-blush-500">
+                <li v-for="(step, index) in steps" :key="step.title" class="grid grid-cols-[2.5rem_1fr] items-start">
+                    <span class="font-display text-2xl leading-8 font-bold text-blush-500">
                         {{ String(index + 1).padStart(2, '0') }}
                     </span>
                     <div>
-                        <p class="font-semibold text-watercourse-800">{{ step.title }}</p>
+                        <p class="leading-8 font-semibold text-watercourse-800">{{ step.title }}</p>
                         <p class="mt-1 text-sm leading-relaxed text-stone-600">{{ step.text }}</p>
                     </div>
                 </li>
