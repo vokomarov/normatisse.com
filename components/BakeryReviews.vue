@@ -1,38 +1,137 @@
 <script setup lang="ts">
-// Deterministic per-index rotation so no two adjacent cards share a tilt
-// (direction note §4) — not randomized, same reasoning as SprinkleScatter.
-const rotations = ['-rotate-2', '-rotate-1', 'rotate-0', 'rotate-1', 'rotate-2'];
+const INSTAGRAM_BAKERY_LINK = 'https://instagram.com/normatisse.bakery';
 
-const reviews = Array.from({ length: 5 }, (_, i) => ({
+// Screenshots are already cropped to their final pixels; the intrinsic height
+// varies per file, so they are served as-is rather than resized to one ratio.
+const reviews = [666, 490, 548, 601, 601].map((height, i) => ({
     n: i + 1,
-    rotate: rotations[i],
+    src: `/images/bakery/reviews/review-${i + 1}.jpg`,
+    height,
 }));
+
+const activeIndex = ref<number | null>(null);
+
+const isOpen = computed({
+    get: () => activeIndex.value !== null,
+    set: (value: boolean) => {
+        if (!value) activeIndex.value = null;
+    },
+});
+
+const active = computed(() => (activeIndex.value === null ? null : reviews[activeIndex.value]));
+
+function step(delta: number) {
+    if (activeIndex.value === null) return;
+    activeIndex.value = (activeIndex.value + delta + reviews.length) % reviews.length;
+}
+
+// Arrow keys walk the lightbox; Escape is handled by UModal itself.
+useEventListener(window, 'keydown', (event: KeyboardEvent) => {
+    if (activeIndex.value === null) return;
+    if (event.key === 'ArrowLeft') step(-1);
+    else if (event.key === 'ArrowRight') step(1);
+});
 </script>
 
 <template>
     <div>
-        <h2 class="logo-font text-3xl sm:text-4xl text-center mb-10">Відгуки</h2>
+        <header class="max-w-xl">
+            <h2 class="brand-heading brand-reveal text-4xl sm:text-5xl">Що кажуть клієнти</h2>
+            <p class="brand-lead brand-reveal mt-4" style="--reveal-delay: 60ms">
+                Скріншоти з переписок, без редагування. Натисніть, щоб прочитати повністю.
+            </p>
+        </header>
 
-        <div class="columns-1 sm:columns-2 lg:columns-3 gap-6">
-            <div
-                v-for="review in reviews"
+        <div class="mt-12 gap-5 sm:columns-2 lg:columns-3">
+            <button
+                v-for="(review, index) in reviews"
                 :key="review.n"
-                class="relative mb-6 inline-block w-full max-w-[400px] break-inside-avoid"
-                :class="review.rotate"
+                type="button"
+                class="brand-focus brand-reveal group mb-5 block w-full cursor-zoom-in break-inside-avoid overflow-hidden rounded-[var(--brand-radius-inner)] bg-white p-2 shadow-[0_18px_40px_-28px_rgba(0,47,37,0.5)] ring-1 ring-watercourse-100 transition duration-300 ease-[var(--brand-ease)] hover:-translate-y-1 hover:shadow-[0_26px_50px_-26px_rgba(0,47,37,0.55)]"
+                :style="{ '--reveal-delay': `${index * 60}ms` }"
+                @click="activeIndex = index"
             >
-                <!-- Washi tape accent, pinned-note read -->
-                <div class="absolute -top-2 left-6 h-4 w-10 rotate-[-4deg] bg-watercourse-100/70" aria-hidden="true" />
-
-                <div class="bg-white p-3 pb-8 shadow-md ring-1 ring-black/5">
-                    <img
-                        :src="`/images/bakery/reviews/review-${review.n}.jpg`"
-                        :alt="`Відгук клієнта ${review.n}`"
-                        class="w-full"
-                        width="414"
-                        loading="lazy"
-                    >
-                </div>
-            </div>
+                <img
+                    :src="review.src"
+                    :alt="`Відгук клієнта ${review.n}`"
+                    class="w-full rounded-[calc(var(--brand-radius-inner)-0.25rem)]"
+                    width="414"
+                    :height="review.height"
+                    loading="lazy"
+                >
+                <span class="sr-only">Відкрити відгук {{ review.n }}</span>
+            </button>
         </div>
+
+        <div class="mt-4 flex justify-center">
+            <UButton
+                class="brand-reveal"
+                icon="i-simple-icons-instagram"
+                color="primary"
+                variant="outline"
+                size="lg"
+                :to="`${INSTAGRAM_BAKERY_LINK}/`"
+                target="_blank"
+                rel="noopener"
+            >
+                Читати всі відгуки
+            </UButton>
+        </div>
+
+        <UModal
+            v-model:open="isOpen"
+            :ui="{
+                overlay: 'bg-watercourse-950/80 backdrop-blur-sm',
+                content: 'max-w-[min(92vw,30rem)] bg-transparent ring-0 shadow-none divide-y-0',
+            }"
+            :title="`Відгук клієнта ${active?.n ?? ''}`"
+            :description="'Скріншот відгуку клієнта Normatisse Bakery'"
+        >
+            <template #content>
+                <div>
+                    <div class="relative mx-auto w-fit">
+                        <img
+                            v-if="active"
+                            :src="active.src"
+                            :alt="`Відгук клієнта ${active.n}`"
+                            class="max-h-[78svh] w-auto max-w-full rounded-[var(--brand-radius-panel)] bg-white shadow-2xl"
+                            width="414"
+                            :height="active.height"
+                        >
+
+                        <UButton
+                            class="absolute top-3 right-3 bg-white text-watercourse-900 shadow-lg hover:bg-white/85"
+                            icon="i-lucide-x"
+                            size="lg"
+                            square
+                            aria-label="Закрити"
+                            @click="isOpen = false"
+                        />
+                    </div>
+
+                    <div class="mt-5 flex items-center justify-center gap-3">
+                        <UButton
+                            class="bg-white text-watercourse-900 hover:bg-white/85"
+                            icon="i-lucide-chevron-left"
+                            size="lg"
+                            square
+                            aria-label="Попередній відгук"
+                            @click="step(-1)"
+                        />
+                        <span class="min-w-16 text-center text-sm font-medium text-white">
+                            {{ (activeIndex ?? 0) + 1 }} / {{ reviews.length }}
+                        </span>
+                        <UButton
+                            class="bg-white text-watercourse-900 hover:bg-white/85"
+                            icon="i-lucide-chevron-right"
+                            size="lg"
+                            square
+                            aria-label="Наступний відгук"
+                            @click="step(1)"
+                        />
+                    </div>
+                </div>
+            </template>
+        </UModal>
     </div>
 </template>

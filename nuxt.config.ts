@@ -18,7 +18,10 @@ export default defineNuxtConfig({
 
   fonts: {
     families: [
-      { name: 'Josefin+Sans', provider: 'google' },
+      // Display face: Latin brand words only (no Cyrillic coverage).
+      { name: 'Josefin Sans', provider: 'google', weights: [400, 600, 700], styles: ['normal', 'italic'] },
+      // Text face: carries all Ukrainian copy.
+      { name: 'Onest', provider: 'google', weights: [400, 500, 600, 700], subsets: ['latin', 'latin-ext', 'cyrillic', 'cyrillic-ext'] },
     ],
   },
 

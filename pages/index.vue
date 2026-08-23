@@ -37,7 +37,8 @@ useSeoMeta({
             <BackgroundBottom />
         </div>
 
-        <div id="offers" class="relative z-0">
+        <!-- Keeps the original reading width now that --ui-container is page-wide. -->
+        <div id="offers" class="relative z-0 mx-auto max-w-2xl">
             <NuxtLink
                class="offer-card mb-6"
                to="/bakery"

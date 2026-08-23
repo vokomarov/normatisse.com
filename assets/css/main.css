@@ -1,10 +1,23 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
-@theme {
-    --ui-container: 700px;
-    --ui-color-primary: var(--color-watercourse-500);
+/* ==========================================================================
+   Normatisse brand design system
+   Tokens here are page-agnostic: /bakery is the first consumer, other pages
+   follow the same scales, surfaces, radii and motion values.
+   ========================================================================== */
 
+/* `static`: Nuxt UI maps --ui-color-primary-* onto these via var(), which
+   Tailwind's usage scan cannot see. Without it the unused steps are tree-shaken
+   and every `bg-primary` resolves to transparent. */
+@theme static {
+    /* --- Type -------------------------------------------------------------
+       Josefin Sans has no Cyrillic coverage, so it is display-only (the Latin
+       brand words). Onest carries all Ukrainian copy. */
+    --font-sans: 'Onest', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Josefin Sans', 'Onest', ui-sans-serif, sans-serif;
+
+    /* --- Primary: watercourse (mint) -------------------------------------- */
     --color-watercourse-50: #ebfef6;
     --color-watercourse-100: #cefde7;
     --color-watercourse-200: #a2f8d4;
@@ -16,17 +29,240 @@
     --color-watercourse-800: #00674f;
     --color-watercourse-900: #015341;
     --color-watercourse-950: #002f25;
+
+    /* --- Accent: blush ----------------------------------------------------
+       Built out from the single brand pink (#f55c81) that previously existed
+       only as a hardcoded hex in .sub-logo-font. */
+    --color-blush-50: #fff1f4;
+    --color-blush-100: #ffe3ea;
+    --color-blush-200: #ffc9d7;
+    --color-blush-300: #fda1bb;
+    --color-blush-400: #fa7d9f;
+    --color-blush-500: #f55c81;
+    --color-blush-600: #e03464;
+    --color-blush-700: #bd2150;
+    --color-blush-800: #9e1f48;
+    --color-blush-900: #871f43;
+    --color-blush-950: #4b0a20;
+
+    /* --- Layout ----------------------------------------------------------- */
+    --ui-container: 76rem;
+
+    /* --- Motion ------------------------------------------------------------ */
+    --brand-ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --brand-duration-fast: 150ms;
+    --brand-duration: 300ms;
+    --brand-duration-slow: 600ms;
 }
 
+:root {
+    /* Corner-radius system. Three steps, one rule:
+       interactive = pill, media/section panels = xl, inner panels = md. */
+    --ui-radius: 0.75rem;
+    --brand-radius-panel: 1.75rem;
+    --brand-radius-inner: 1rem;
+
+    /* Section surfaces. Every full-bleed band picks one of these. */
+    --brand-surface: #ffffff;
+    --brand-surface-mint: #f2fcf8;
+    --brand-surface-blush: #fff7f9;
+    --brand-surface-deep: #002f25;
+
+    /* On-surface text for the one dark band */
+    --brand-on-deep: #d9fbee;
+
+    /* Nuxt UI defaults these to the 500 step, which puts white button labels at
+       ~2.2:1 (primary) and ~3.0:1 (secondary). Darker steps clear WCAG AA. */
+    --ui-primary: var(--color-watercourse-800);
+    --ui-secondary: var(--color-blush-600);
+}
+
+/* In-page anchors land below the band's top edge, not flush against it. */
+html {
+    scroll-behavior: smooth;
+}
+
+[id] {
+    scroll-margin-top: 2rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+/* ==========================================================================
+   Brand type roles
+   ========================================================================== */
+
 .logo-font {
-    font-family: 'Josefin Sans', sans-serif;
-    color: #00674F;
+    font-family: var(--font-display);
+    color: var(--color-watercourse-800);
     @apply font-bold;
 }
 
 .sub-logo-font {
-    font-family: 'Josefin Sans', sans-serif;
-    color: #F55C81;
+    font-family: var(--font-display);
+    color: var(--color-blush-500);
     @apply font-bold italic;
 }
 
+/* Section heading. Display face, tight, with the brand's deep green. */
+.brand-heading {
+    font-family: var(--font-display);
+    @apply font-bold tracking-tight text-balance;
+    color: var(--color-watercourse-800);
+    /* Josefin's short descenders plus italic accents need clearance. */
+    line-height: 1.1;
+}
+
+.brand-heading--on-deep {
+    color: #ffffff;
+}
+
+/* Lead paragraph under a heading. */
+.brand-lead {
+    @apply text-base sm:text-lg leading-relaxed text-pretty;
+    color: var(--color-stone-600, #57534e);
+}
+
+.brand-lead--on-deep {
+    color: color-mix(in oklab, var(--brand-on-deep) 82%, transparent);
+}
+
+/* Price figure. Italic display face, blush, never wraps mid-figure. */
+.brand-price {
+    font-family: var(--font-display);
+    @apply font-bold italic whitespace-nowrap;
+    color: var(--color-blush-600);
+}
+
+/* Small caps label that heads a spec group inside a product card. */
+.brand-term {
+    @apply text-[0.6875rem] font-semibold uppercase tracking-[0.14em];
+    color: var(--color-watercourse-800);
+}
+
+/* ==========================================================================
+   Layout primitives
+   ========================================================================== */
+
+/* Full-bleed band that still keeps its content on the page grid. */
+.brand-band {
+    @apply relative w-full overflow-hidden;
+}
+
+.brand-band__inner {
+    @apply relative z-10 mx-auto w-full max-w-[76rem] px-5 sm:px-8 lg:px-10;
+}
+
+/* Soft panel used for the price block inside product cards. */
+.brand-panel {
+    border-radius: var(--brand-radius-inner);
+    @apply bg-watercourse-50/80 ring-1 ring-watercourse-100;
+}
+
+.brand-card {
+    border-radius: var(--brand-radius-panel);
+    /* No flex-direction here: this class is emitted after Tailwind's utility
+       layer, so a `lg:flex-row` on the element would lose to it. */
+    @apply relative flex overflow-hidden bg-white ring-1 ring-watercourse-100/80;
+    box-shadow: 0 1px 2px color-mix(in oklab, var(--color-watercourse-900) 6%, transparent),
+                0 12px 32px -20px color-mix(in oklab, var(--color-watercourse-900) 28%, transparent);
+    transition: transform var(--brand-duration) var(--brand-ease),
+                box-shadow var(--brand-duration) var(--brand-ease);
+}
+
+@media (hover: hover) {
+    .brand-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 1px 2px color-mix(in oklab, var(--color-watercourse-900) 8%, transparent),
+                    0 28px 48px -24px color-mix(in oklab, var(--color-watercourse-900) 34%, transparent);
+    }
+}
+
+/* Chip used for constructor options and product detail values. */
+.brand-chip {
+    @apply inline-flex items-center rounded-full bg-white px-3 py-1 text-sm ring-1 ring-watercourse-200/70;
+    color: var(--color-stone-700, #44403c);
+}
+
+.brand-chip--on-deep {
+    @apply bg-white/10 ring-white/15;
+    color: var(--brand-on-deep);
+}
+
+/* ==========================================================================
+   Motion: parallax + reveal
+   Parallax runs on CSS scroll-driven animations where supported and falls back
+   to a rAF/IntersectionObserver driver (composables/useParallax.ts) elsewhere.
+   ========================================================================== */
+
+@keyframes brand-parallax {
+    from {
+        transform: translate3d(0, var(--parallax-from, 12%), 0) scale(var(--parallax-scale, 1));
+    }
+
+    to {
+        transform: translate3d(0, var(--parallax-to, -12%), 0) scale(var(--parallax-scale, 1));
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+        .brand-parallax {
+            animation: brand-parallax linear both;
+            animation-timeline: view();
+            animation-range: cover 0% cover 100%;
+            will-change: transform;
+        }
+    }
+}
+
+@keyframes brand-reveal {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 1.25rem, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* `.is-armed` is added by useReveal at mount, so content stays visible when the
+   script never runs (no JS, print, full-page capture before scroll). */
+.brand-reveal.is-armed {
+    opacity: 0;
+}
+
+.brand-reveal.is-armed.is-revealed {
+    animation: brand-reveal var(--brand-duration-slow) var(--brand-ease) both;
+    animation-delay: var(--reveal-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .brand-reveal,
+    .brand-reveal.is-armed,
+    .brand-reveal.is-armed.is-revealed {
+        opacity: 1;
+        animation: none;
+        transform: none;
+    }
+
+    .brand-card {
+        transition: none;
+    }
+
+    .brand-card:hover {
+        transform: none;
+    }
+}
+
+/* Keyboard focus stays visible everywhere, including on image buttons. */
+.brand-focus:focus-visible {
+    outline: 3px solid var(--color-blush-500);
+    outline-offset: 3px;
+}

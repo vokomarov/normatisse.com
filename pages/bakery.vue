@@ -1,54 +1,48 @@
 <script setup lang="ts">
-import BackgroundTop from '@/components/BackgroundTop.vue';
-import BackgroundBottom from '@/components/BackgroundBottom.vue';
 import BakeryHero from '@/components/BakeryHero.vue';
 import BakeryProducts from '@/components/BakeryProducts.vue';
-import BakeryPhotoStrip from '@/components/BakeryPhotoStrip.vue';
+import BakeryGallery from '@/components/BakeryGallery.vue';
 import BakeryReviews from '@/components/BakeryReviews.vue';
 import BakeryContact from '@/components/BakeryContact.vue';
+import BakeryFooter from '@/components/BakeryFooter.vue';
+import BrandSection from '@/components/BrandSection.vue';
 
-const year = ref(new Date().getFullYear());
+const description = 'Торти, кекси, капкейки та мадлен на замовлення у Вінниці. Make day sweeter.';
 
 useSeoMeta({
     title: 'Normatisse Bakery — домашня випічка на замовлення',
     ogTitle: 'Normatisse Bakery — домашня випічка на замовлення',
-    description: 'Торти, кекси, капкейки та мадлен на замовлення у Львові. Make day sweeter.',
-    ogDescription: 'Торти, кекси, капкейки та мадлен на замовлення у Львові. Make day sweeter.',
+    description,
+    ogDescription: description,
     ogImage: '/images/logo-bakery-full.svg',
     twitterCard: 'summary_large_image',
 })
 </script>
 
+<!-- Full-bleed shell: every band owns its own surface and inner container, so
+     nothing at this level constrains width. -->
 <template>
-    <UContainer>
-        <div class="relative isolate px-6 pt-14 lg:px-8">
-            <BackgroundTop />
-            <BakeryHero />
-            <BackgroundBottom />
-        </div>
+    <div class="bg-[var(--brand-surface)]">
+        <BakeryHero />
 
-        <div id="products" class="relative z-0 pb-16">
+        <BrandSection id="products" surface="mint">
             <BakeryProducts />
-        </div>
+        </BrandSection>
 
-        <div class="pb-16">
-            <BakeryPhotoStrip />
-        </div>
+        <!-- The page's single dark band. Everything before and after it is light,
+             so the flip reads as one deliberate accent rather than a stripe pattern. -->
+        <BrandSection id="gallery" surface="deep" curve-top>
+            <BakeryGallery />
+        </BrandSection>
 
-        <div class="pb-16">
+        <BrandSection id="reviews" surface="white" curve-top>
             <BakeryReviews />
-        </div>
+        </BrandSection>
 
-        <div class="pb-16">
+        <BrandSection id="contact" surface="blush">
             <BakeryContact />
-        </div>
+        </BrandSection>
 
-        <USeparator class="pt-10" />
-        <div class="text-center text-xs py-3">&copy; {{ year }} All rights reserved.</div>
-    </UContainer>
+        <BakeryFooter />
+    </div>
 </template>
-
-<style lang="css">
-@import "tailwindcss";
-@import "@nuxt/ui";
-</style>

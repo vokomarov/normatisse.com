@@ -1,291 +1,294 @@
 <script setup lang="ts">
 import SprinkleScatter from '@/components/SprinkleScatter.vue';
 
-interface ProductVariant {
+interface PriceRow {
     label: string;
     price: string;
+}
+
+interface PriceGroup {
+    label?: string;
+    rows: PriceRow[];
+}
+
+interface DetailGroup {
+    term: string;
+    values: string[];
 }
 
 interface Product {
     slug: string;
     name: string;
+    /** One line: what the thing is. Never carries prices or options. */
+    lead: string;
+    photo: string;
+    from: string;
+    priceCaption: string;
+    prices: PriceGroup[];
+    details: DetailGroup[];
     note?: string;
-    photo?: string;
-    variants: ProductVariant[];
-    description: string[];
 }
+
+// Торти is the flagship: it is the only line with a build-your-own path, so it
+// gets its own feature block rather than a slot in the card grid.
+const torty = {
+    name: 'Торти',
+    lead: 'Бісквітні торти на замовлення. Візьміть один із готових смаків або зберіть свій.',
+    photo: '/images/bakery/gallery/torty.jpg',
+    from: 'від 850 грн/кг',
+    flavours: [
+        { label: 'Фісташка і малина', price: '900 грн/кг' },
+        { label: 'Кава і Бейліс', price: '900 грн/кг' },
+        { label: 'Вишня і шоколад', price: '850 грн/кг' },
+        { label: 'Кокос і малина', price: '850 грн/кг' },
+        { label: 'Ягідний мікс', price: '850 грн/кг' },
+    ],
+    builder: [
+        { term: 'Бісквіт', values: ['ванільний', 'шоколадний', 'кавовий', 'кокосовий', 'лимонний'] },
+        { term: 'Мус', values: ['білий шоколад', 'молочний шоколад', 'темний шоколад', 'ягідний', 'Бейліс', 'Кіндер', 'Орео'] },
+        { term: 'Начинка', values: ['ягідний конфітюр', 'ганаш на білому шоколаді'] },
+        { term: 'Крем', values: ['крем-чіз на вершках'] },
+        { term: 'Покриття', values: ['крем-чіз на маслі', 'шоколадний ганаш'] },
+    ] satisfies DetailGroup[],
+    builderNote: 'Конструктор рахується від 900 грн/кг. Дизайн і покриття рахуються окремо. Інші варіанти за запитом. З велюром не працюю.',
+};
 
 const products: Product[] = [
     {
-        slug: 'torty',
-        name: 'Торти',
-        photo: '/images/bakery/gallery/torty.jpg',
-        note: 'Конструктор — від 900 грн/кг',
-        variants: [
-            { label: 'Фісташка-малина', price: '900 грн/кг' },
-            { label: 'Кава-Бейліс', price: '900 грн/кг' },
-            { label: 'Вишня-шоколад', price: '850 грн/кг' },
-            { label: 'Кокос-малина', price: '850 грн/кг' },
-            { label: 'Ягідний мікс', price: '850 грн/кг' },
+        slug: 'kapkeiky',
+        name: 'Капкейки',
+        lead: 'Шоколадні, ванільні, карамельні та лимонно-макові.',
+        photo: '/images/bakery/gallery/kapkeiky.jpg',
+        from: 'від 360 грн',
+        priceCaption: 'За набір',
+        prices: [
+            {
+                rows: [
+                    { label: '12 шт', price: '1020 грн' },
+                    { label: '9 шт', price: '835 грн' },
+                    { label: '6 шт', price: '555 грн' },
+                    { label: '4 шт', price: '360 грн' },
+                ],
+            },
         ],
-        description: [
-            'Бісквіт: ванільний, шоколадний, кавовий, кокосовий, лимонний.',
-            'Мус: шоколадний (білий/молочний/темний), ягідний, Бейліс, Кіндер, Орео.',
-            'Начинка: ягідний конфітюр або ганаш на білому шоколаді.',
-            'Крем: крем-чіз на вершках. Покриття: крем-чіз на маслі або шоколадний ганаш.',
-            'Дизайн та покриття крем-чіз на маслі / ганаш рахуються окремо. Інші варіанти — за запитом. Не працюю з велюром.',
+        details: [
+            { term: 'Начинка', values: ['нутелла', 'солона карамель', 'вишня', 'полуниця', 'малина'] },
+            { term: 'Верхівка', values: ['крем-чіз на вершках'] },
         ],
+        note: 'Мінімальний шоколадний дизайн входить у вартість. Несезонні ягоди, квіти та топер рахуються окремо.',
     },
     {
         slug: 'keksy',
         name: 'Кекси',
+        lead: 'Великі порційні кекси без «шапочки».',
         photo: '/images/bakery/gallery/keksy.jpg',
-        note: 'Великі порційні, без «шапочки»',
-        variants: [
-            { label: 'Шоколадні, x9', price: '594 грн' },
-            { label: 'Шоколадні, x6', price: '396 грн' },
-            { label: 'Фундучні, x9', price: '693 грн' },
-            { label: 'Фундучні, x6', price: '462 грн' },
+        from: 'від 396 грн',
+        priceCaption: 'За набір',
+        prices: [
+            {
+                label: 'Шоколадні',
+                rows: [
+                    { label: '9 шт', price: '594 грн' },
+                    { label: '6 шт', price: '396 грн' },
+                ],
+            },
+            {
+                label: 'Фундучні',
+                rows: [
+                    { label: '9 шт', price: '693 грн' },
+                    { label: '6 шт', price: '462 грн' },
+                ],
+            },
         ],
-        description: [
-            'Шоколадні: з шоколадними краплями і нутеллою в середині, посипані фундуком.',
-            'Фундучні: з фундучною пастою, шоколадними краплями і нутеллою в середині, посипані пеканом.',
-        ],
-    },
-    {
-        slug: 'kapkeiky',
-        name: 'Капкейки',
-        photo: '/images/bakery/gallery/kapkeiky.jpg',
-        note: 'Шоколадні, ванільні, карамельні, лимонно-макові',
-        variants: [
-            { label: 'x12', price: '1020 грн' },
-            { label: 'x9', price: '835 грн' },
-            { label: 'x6', price: '555 грн' },
-            { label: 'x4', price: '360 грн' },
-        ],
-        description: [
-            'Начинка: нутелла, солона карамель, вишня, полуниця, малина.',
-            'Верхівка: крем-чіз на вершках. Мінімальний шоколадний дизайн входить у вартість.',
-            'Несезонні ягоди, квіти, топер рахуються окремо.',
+        details: [
+            { term: 'Шоколадні', values: ['шоколадні краплі', 'нутелла всередині', 'фундук зверху'] },
+            { term: 'Фундучні', values: ['фундучна паста', 'шоколадні краплі', 'нутелла всередині', 'пекан зверху'] },
         ],
     },
     {
         slug: 'madlen',
         name: 'Мадлен',
+        lead: 'Шоколадний, ванільний, кавовий та лимонно-маковий.',
         photo: '/images/bakery/gallery/madlen.jpg',
-        note: 'Шоколадний, ванільний, кавовий, лимонно-маковий',
-        variants: [
-            { label: 'Без начинки, за шт', price: '40 грн' },
-            { label: 'З начинкою/капсулою, за шт', price: '45 грн' },
-            { label: 'Асорті без начинки, x8', price: '360 грн' },
-            { label: 'Асорті без начинки, x12', price: '540 грн' },
-            { label: 'Асорті з начинкою, x8', price: '400 грн' },
-            { label: 'Асорті з начинкою, x12', price: '600 грн' },
+        from: 'від 40 грн',
+        priceCaption: 'Поштучно та асорті',
+        prices: [
+            {
+                label: 'Поштучно',
+                rows: [
+                    { label: 'Без начинки', price: '40 грн' },
+                    { label: 'З начинкою', price: '45 грн' },
+                ],
+            },
+            {
+                label: 'Асорті без начинки',
+                rows: [
+                    { label: '8 шт', price: '360 грн' },
+                    { label: '12 шт', price: '540 грн' },
+                ],
+            },
+            {
+                label: 'Асорті з начинкою',
+                rows: [
+                    { label: '8 шт', price: '400 грн' },
+                    { label: '12 шт', price: '600 грн' },
+                ],
+            },
         ],
-        description: [
-            'Від 12 шт одного смаку — знижка 5%.',
-            'Начинка: нутелла, солона карамель, шоколадна, піпетки з Бейліс.',
-            'Покриття: білий, молочний, темний шоколад.',
+        details: [
+            { term: 'Начинка', values: ['нутелла', 'солона карамель', 'шоколадна', 'піпетки з Бейліс'] },
+            { term: 'Покриття', values: ['білий шоколад', 'молочний шоколад', 'темний шоколад'] },
         ],
+        note: 'Від 12 шт одного смаку знижка 5%.',
     },
 ];
 
-// Pulled out by slug (rather than reordering `products`) so the DOM/grid order can
-// match the bakery-counter hierarchy (Торти, Капкейки, Кекси, Мадлен) while the data
-// array above stays in the brief's verbatim order.
-const torty = products.find((product) => product.slug === 'torty')!;
-const kapkeiky = products.find((product) => product.slug === 'kapkeiky')!;
-const keksy = products.find((product) => product.slug === 'keksy')!;
-const madlen = products.find((product) => product.slug === 'madlen')!;
-
-// Торти's two content modes, rendered as UAccordion items via named `slot`s below.
-const tortyAccordionItems = [
-    { label: 'Конструктор', value: 'constructor', slot: 'constructor' },
-    { label: 'Готові смаки', value: 'flavors', slot: 'flavors' },
-];
-
-// Card surface lives on UCard itself via `ui.root` (a supported override, not a class
-// fight); rotation/hover transforms live on each card's outer wrapper div instead.
-const cardUi = { root: 'flex h-full flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-watercourse-100 shadow-sm', header: 'p-0 border-b-0' };
-const wrapperTransition = 'transition-all duration-150 ease-in-out hover:-translate-y-1 hover:shadow-md hover:ring-2 hover:ring-watercourse-300 rounded-2xl';
+// `slot: 'builder'`, never 'constructor': Vue resolves $slots.constructor to
+// Object.prototype.constructor, so an accordion item with that slot name renders
+// an empty panel that never opens.
+const builderItems = [{ label: 'Зібрати свій торт', value: 'builder', slot: 'builder' as const }];
 </script>
 
 <template>
     <div>
-        <h2 class="logo-font text-3xl sm:text-4xl text-center mb-10">Асортимент та ціни</h2>
+        <header class="max-w-2xl">
+            <h2 class="brand-heading brand-reveal text-4xl sm:text-5xl lg:text-[3.25rem]">
+                Асортимент і ціни
+            </h2>
+            <p class="brand-lead brand-reveal mt-4" style="--reveal-delay: 60ms">
+                Кожна позиція печеться під замовлення. Наперед бронюйте дату, особливо на вихідні.
+            </p>
+        </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <!-- Торти — flagship showcase, stays level, anchors the layout -->
-            <div :class="['relative lg:col-span-7 lg:row-span-2 lg:self-start', wrapperTransition]">
-                <!-- Placement 3 (direction note §5): small sprinkle cluster tucked behind the card's top-right corner.
-                     lg-only — on mobile the card is full-width, so the negative right offset would poke past the
-                     viewport edge and cause horizontal overflow. Explicit h-44/w-44 on this wrapper matches
-                     SprinkleScatter's own root size — its svg root is itself `absolute`, so without a sized wrapper
-                     here the box collapses to 0 and top/right both being set resolves unpredictably (verified via
-                     agent-browser: it drifted off over the neighbouring card instead of tucking behind this one). -->
-                <div class="hidden lg:block absolute -z-10 lg:-top-16 lg:-right-16 h-44 w-44" aria-hidden="true">
-                    <SprinkleScatter class="scale-50 opacity-40" />
+        <!-- Flagship block: photo beside three clearly separated content zones
+             (what it is / what it costs / what you can choose). -->
+        <article class="brand-card brand-reveal mt-12 flex-col lg:mt-16 lg:flex-row" style="--reveal-delay: 80ms">
+            <div class="relative lg:w-[42%] lg:shrink-0">
+                <NuxtImg
+                    :src="torty.photo"
+                    :alt="`${torty.name} Normatisse Bakery`"
+                    class="h-56 w-full object-cover sm:h-72 lg:h-full lg:min-h-[34rem]"
+                    width="900"
+                    height="1200"
+                    sizes="100vw lg:544px"
+                    loading="lazy"
+                />
+                <p class="absolute bottom-4 left-4 rounded-full bg-white/95 px-4 py-1.5 text-sm font-semibold text-watercourse-800 shadow-sm backdrop-blur">
+                    {{ torty.from }}
+                </p>
+            </div>
+
+            <div class="flex min-w-0 flex-1 flex-col gap-7 p-6 sm:p-8 lg:p-10">
+                <!-- Zone 1: identity -->
+                <div>
+                    <h3 class="brand-heading text-3xl sm:text-4xl">{{ torty.name }}</h3>
+                    <p class="brand-lead mt-2">{{ torty.lead }}</p>
                 </div>
 
-                <UCard :ui="cardUi">
-                    <template #header>
-                        <div class="aspect-[4/3] w-full bg-gradient-to-br from-watercourse-50 to-white">
-                            <img
-                                v-if="torty.photo"
-                                :src="torty.photo"
-                                :alt="torty.name"
-                                class="h-full w-full object-cover"
-                            >
-                        </div>
-                        <div class="px-4 pt-4 sm:px-6">
-                            <h3 class="logo-font text-3xl sm:text-4xl">{{ torty.name }}</h3>
-                            <p v-if="torty.note" class="sub-logo-font text-2xl sm:text-3xl mt-1">{{ torty.note }}</p>
-                        </div>
-                    </template>
-
-                    <UAccordion :items="tortyAccordionItems" default-value="flavors">
-                        <template #constructor-body>
-                            <p
-                                v-for="(line, i) in torty.description"
-                                :key="i"
-                                class="text-sm sm:text-base text-gray-600 mb-2 last:mb-0"
-                            >
-                                {{ line }}
-                            </p>
-                        </template>
-
-                        <template #flavors-body>
-                            <ul class="divide-y divide-watercourse-100">
-                                <li
-                                    v-for="variant in torty.variants"
-                                    :key="variant.label"
-                                    class="flex items-baseline justify-between gap-x-2 py-2"
-                                >
-                                    <span class="min-w-0 flex-1 text-sm sm:text-base text-gray-600">{{ variant.label }}</span>
-                                    <span class="sub-logo-font text-lg sm:text-xl shrink-0 whitespace-nowrap">{{ variant.price }}</span>
-                                </li>
-                            </ul>
-                        </template>
-                    </UAccordion>
-                </UCard>
-            </div>
-
-            <!-- Капкейки -->
-            <div :class="['lg:col-span-5 lg:rotate-[-1deg]', wrapperTransition]">
-                <UCard :ui="cardUi">
-                    <template #header>
-                        <div class="aspect-square w-full bg-gradient-to-br from-watercourse-50 to-white">
-                            <img
-                                v-if="kapkeiky.photo"
-                                :src="kapkeiky.photo"
-                                :alt="kapkeiky.name"
-                                class="h-full w-full object-cover"
-                            >
-                        </div>
-                        <div class="px-4 pt-4 sm:px-6">
-                            <h3 class="logo-font text-2xl">{{ kapkeiky.name }}</h3>
-                            <p v-if="kapkeiky.note" class="text-sm sm:text-base text-gray-600 mt-1">{{ kapkeiky.note }}</p>
-                        </div>
-                    </template>
-
-                    <ul class="divide-y divide-watercourse-100">
-                        <li
-                            v-for="variant in kapkeiky.variants"
-                            :key="variant.label"
-                            class="flex items-baseline justify-between gap-x-2 py-2"
+                <!-- Zone 2: prices, on their own surface -->
+                <div class="brand-panel p-5 sm:p-6">
+                    <p class="brand-term">Готові смаки</p>
+                    <dl class="mt-3 space-y-0.5">
+                        <div
+                            v-for="flavour in torty.flavours"
+                            :key="flavour.label"
+                            class="flex items-baseline justify-between gap-4 border-b border-watercourse-100 py-2.5 last:border-b-0 last:pb-0"
                         >
-                            <span class="min-w-0 flex-1 text-sm sm:text-base text-gray-600">{{ variant.label }}</span>
-                            <span class="sub-logo-font text-lg sm:text-xl shrink-0 whitespace-nowrap">{{ variant.price }}</span>
-                        </li>
-                    </ul>
-
-                    <p
-                        v-for="(line, i) in kapkeiky.description"
-                        :key="i"
-                        class="text-sm sm:text-base text-gray-600 mt-3 first:mt-4"
-                    >
-                        {{ line }}
-                    </p>
-                </UCard>
-            </div>
-
-            <!-- Кекси -->
-            <div :class="['lg:col-span-3 lg:rotate-[1deg]', wrapperTransition]">
-                <UCard :ui="cardUi">
-                    <template #header>
-                        <div class="aspect-square w-full bg-gradient-to-br from-watercourse-50 to-white">
-                            <img
-                                v-if="keksy.photo"
-                                :src="keksy.photo"
-                                :alt="keksy.name"
-                                class="h-full w-full object-cover"
-                            >
+                            <dt class="min-w-0 text-sm text-stone-700 sm:text-base">{{ flavour.label }}</dt>
+                            <dd class="brand-price text-lg sm:text-xl">{{ flavour.price }}</dd>
                         </div>
-                        <div class="px-4 pt-4 sm:px-6">
-                            <h3 class="logo-font text-2xl">{{ keksy.name }}</h3>
-                            <p v-if="keksy.note" class="text-sm sm:text-base text-gray-600 mt-1">{{ keksy.note }}</p>
-                        </div>
+                    </dl>
+                </div>
+
+                <!-- Zone 3: options, as labelled chips rather than prose -->
+                <UAccordion
+                    :items="builderItems"
+                    default-value="builder"
+                    :ui="{
+                        item: 'border-t border-b-0 border-watercourse-100 pt-1',
+                        trigger: 'text-base font-semibold text-watercourse-800 py-4',
+                        body: 'pb-1',
+                    }"
+                >
+                    <template #builder-body>
+                        <dl class="space-y-4">
+                            <div v-for="group in torty.builder" :key="group.term">
+                                <dt class="brand-term">{{ group.term }}</dt>
+                                <dd class="mt-2 flex flex-wrap gap-1.5">
+                                    <span v-for="value in group.values" :key="value" class="brand-chip">{{ value }}</span>
+                                </dd>
+                            </div>
+                        </dl>
+                        <p class="mt-5 text-sm leading-relaxed text-stone-500">{{ torty.builderNote }}</p>
                     </template>
-
-                    <ul class="divide-y divide-watercourse-100">
-                        <li
-                            v-for="variant in keksy.variants"
-                            :key="variant.label"
-                            class="flex items-baseline justify-between gap-x-2 py-2"
-                        >
-                            <span class="min-w-0 flex-1 text-sm sm:text-base text-gray-600">{{ variant.label }}</span>
-                            <span class="sub-logo-font text-lg sm:text-xl shrink-0 whitespace-nowrap">{{ variant.price }}</span>
-                        </li>
-                    </ul>
-
-                    <p
-                        v-for="(line, i) in keksy.description"
-                        :key="i"
-                        class="text-sm sm:text-base text-gray-600 mt-3 first:mt-4"
-                    >
-                        {{ line }}
-                    </p>
-                </UCard>
+                </UAccordion>
             </div>
+        </article>
 
-            <!-- Мадлен -->
-            <div :class="['lg:col-span-2 lg:rotate-[-0.5deg]', wrapperTransition]">
-                <UCard :ui="cardUi">
-                    <template #header>
-                        <div class="aspect-square w-full bg-gradient-to-br from-watercourse-50 to-white">
-                            <img
-                                v-if="madlen.photo"
-                                :src="madlen.photo"
-                                :alt="madlen.name"
-                                class="h-full w-full object-cover"
-                            >
-                        </div>
-                        <div class="px-4 pt-4 sm:px-6">
-                            <h3 class="logo-font text-2xl">{{ madlen.name }}</h3>
-                            <p v-if="madlen.note" class="text-sm sm:text-base text-gray-600 mt-1">{{ madlen.note }}</p>
-                        </div>
-                    </template>
-
-                    <ul class="divide-y divide-watercourse-100">
-                        <li
-                            v-for="variant in madlen.variants"
-                            :key="variant.label"
-                            class="flex items-baseline justify-between gap-x-2 py-2"
-                        >
-                            <span class="min-w-0 flex-1 text-sm sm:text-base text-gray-600">{{ variant.label }}</span>
-                            <span class="sub-logo-font text-lg sm:text-xl shrink-0 whitespace-nowrap">{{ variant.price }}</span>
-                        </li>
-                    </ul>
-
-                    <p
-                        v-for="(line, i) in madlen.description"
-                        :key="i"
-                        class="text-sm sm:text-base text-gray-600 mt-3 first:mt-4"
-                    >
-                        {{ line }}
+        <!-- Catalogue grid: same three zones, compact. -->
+        <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:mt-8 lg:grid-cols-3">
+            <article
+                v-for="(product, index) in products"
+                :key="product.slug"
+                class="brand-card brand-reveal flex-col"
+                :style="{ '--reveal-delay': `${index * 80}ms` }"
+            >
+                <div class="relative">
+                    <NuxtImg
+                        :src="product.photo"
+                        :alt="`${product.name} Normatisse Bakery`"
+                        class="aspect-[4/3] w-full object-cover"
+                        width="640"
+                        height="480"
+                        sizes="100vw sm:50vw lg:384px"
+                        loading="lazy"
+                    />
+                    <p class="absolute bottom-3 left-3 rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-watercourse-800 shadow-sm backdrop-blur">
+                        {{ product.from }}
                     </p>
-                </UCard>
-            </div>
+                </div>
+
+                <div class="flex flex-1 flex-col gap-5 p-5 sm:p-6">
+                    <div>
+                        <h3 class="brand-heading text-2xl">{{ product.name }}</h3>
+                        <p class="mt-1.5 text-sm leading-relaxed text-stone-600">{{ product.lead }}</p>
+                    </div>
+
+                    <div class="brand-panel p-4">
+                        <p class="brand-term">{{ product.priceCaption }}</p>
+                        <div class="mt-2 space-y-3">
+                            <div v-for="(group, groupIndex) in product.prices" :key="group.label ?? groupIndex">
+                                <p v-if="group.label" class="text-xs font-medium text-watercourse-800">{{ group.label }}</p>
+                                <dl>
+                                    <div
+                                        v-for="row in group.rows"
+                                        :key="row.label"
+                                        class="flex items-baseline justify-between gap-3 py-1"
+                                    >
+                                        <dt class="min-w-0 text-sm text-stone-700">{{ row.label }}</dt>
+                                        <dd class="brand-price text-base">{{ row.price }}</dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <dl class="space-y-3">
+                        <div v-for="group in product.details" :key="group.term">
+                            <dt class="brand-term">{{ group.term }}</dt>
+                            <dd class="mt-1.5 flex flex-wrap gap-1.5">
+                                <span v-for="value in group.values" :key="value" class="brand-chip">{{ value }}</span>
+                            </dd>
+                        </div>
+                    </dl>
+
+                    <p v-if="product.note" class="mt-auto text-xs leading-relaxed text-stone-500">{{ product.note }}</p>
+                </div>
+            </article>
+        </div>
+
+        <div class="pointer-events-none absolute -right-10 top-1/3 hidden h-44 w-44 lg:block" aria-hidden="true">
+            <SprinkleScatter class="scale-90 opacity-50" />
         </div>
     </div>
 </template>

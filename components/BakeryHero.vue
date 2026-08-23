@@ -1,83 +1,73 @@
 <script setup lang="ts">
-import SprinkleScatter from '@/components/SprinkleScatter.vue';
+const photoLayer = ref<HTMLElement | null>(null);
+const blobLayer = ref<HTMLElement | null>(null);
+
+useParallax(photoLayer);
+useParallax(blobLayer);
 </script>
 
 <template>
-    <div class="relative grid grid-cols-1 lg:grid-cols-12 items-center gap-10 lg:gap-16 pt-20 pb-28 sm:pt-28 sm:pb-40">
-        <!--
-          Placement 1 (direction note §5): large sprinkle burst. On desktop it sits
-          bottom-right of the decoration column, bleeding toward the container edge.
-          On mobile the decoration column disappears, so this same instance shrinks
-          and tucks behind the top-right of the logo instead (low z, per §1's mobile
-          wireframe note) rather than adding a third, undocumented instance.
-        -->
-        <div
-            class="absolute -z-10 top-0 right-0 lg:top-1/2 lg:-translate-y-1/2 lg:right-0 lg:translate-x-10"
-            aria-hidden="true"
-        >
-            <SprinkleScatter class="rotate-[18deg] scale-50 opacity-40 lg:scale-100 lg:opacity-60" />
+    <section class="brand-band flex min-h-[86svh] items-center bg-[var(--brand-surface)] pt-16 pb-20 sm:pt-20 sm:pb-24 lg:pt-20 lg:pb-28">
+        <!-- Ambient layer: mint/blush wash, blurred blob, then the brand's own
+             sprinkles as live particles on top of both. -->
+        <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+            <div class="absolute inset-0 bg-[radial-gradient(120%_90%_at_82%_-10%,var(--color-blush-100)_0%,transparent_55%),radial-gradient(90%_70%_at_-10%_20%,var(--color-watercourse-100)_0%,transparent_60%)]" />
+            <div
+                ref="blobLayer"
+                class="brand-parallax absolute -top-24 left-1/2 h-[38rem] w-[38rem] -translate-x-1/2 rounded-full opacity-40 blur-3xl"
+                style="--parallax-from: 6%; --parallax-to: -14%; background: conic-gradient(from 140deg, var(--color-blush-200), var(--color-watercourse-200), var(--color-blush-100))"
+            />
+            <BakerySprinkleField />
         </div>
 
-        <div class="relative lg:col-span-7 text-left hero-fade-in">
-            <!--
-              Placement 2: small sprinkle cluster, top-left of the text block.
-              lg-only — on mobile, Placement 1 (top-right-of-logo corner tuck) is
-              the sole decoration cluster per §1's mobile wireframe ("a single
-              small sprinkle group... not its own block"); showing both here too
-              would put two clusters on screen at once.
-            -->
-            <div class="hidden lg:block absolute -z-10 lg:-top-10 lg:-left-10" aria-hidden="true">
-                <SprinkleScatter class="rotate-[-12deg] scale-75 opacity-50" />
-            </div>
+        <div class="brand-band__inner">
+            <div class="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
+                <div class="lg:col-span-7">
+                    <img
+                        class="w-full max-w-[19rem] sm:max-w-sm lg:max-w-md"
+                        src="/images/logo-bakery-full.svg"
+                        alt="Normatisse Bakery"
+                        width="640"
+                        height="150"
+                    >
 
-            <div class="flex justify-start pb-3">
-                <img class="max-w-xs lg:max-w-sm" src="/images/logo-bakery-full.svg" alt="Normatisse Bakery">
-            </div>
-            <p class="sub-logo-font text-2xl sm:text-3xl lg:text-4xl">make day sweeter</p>
-            <p class="mt-4 text-lg font-medium text-pretty text-gray-600 sm:text-xl/8">
-                Ділюся з вами частинкою себе, спеченою з любов'ю: домашні торти, кекси, капкейки та мадлен на замовлення у Львові.
-            </p>
-            <div class="mt-10 flex justify-start">
-                <UButton variant="solid" color="primary" size="xl" to="#products">
-                    Що у нас є?
-                </UButton>
+                    <p class="sub-logo-font mt-4 pb-1 text-2xl leading-[1.15] sm:text-3xl lg:text-4xl">
+                        make day sweeter
+                    </p>
+
+                    <p class="brand-lead mt-6 max-w-lg">
+                        Домашні торти, кекси, капкейки та мадлен на замовлення у Вінниці.
+                        Печу під ваш смак і ваш привід.
+                    </p>
+
+                    <div class="mt-9 flex flex-wrap items-center gap-3">
+                        <UButton size="xl" color="primary" variant="solid" to="#products">
+                            Дивитись асортимент
+                        </UButton>
+                        <UButton size="xl" color="primary" variant="ghost" to="#contact">
+                            Замовити
+                        </UButton>
+                    </div>
+                </div>
+
+                <!-- Photo column. On mobile it drops below the copy rather than
+                     disappearing, so the hero still shows the actual product. -->
+                <div class="relative lg:col-span-5">
+                    <div ref="photoLayer" class="brand-parallax" style="--parallax-from: 5%; --parallax-to: -5%">
+                        <div class="relative mx-auto max-w-sm overflow-hidden rounded-[var(--brand-radius-panel)] bg-white p-2 shadow-[0_30px_60px_-30px_rgba(0,47,37,0.45)] ring-1 ring-watercourse-100 lg:mr-0 lg:ml-auto">
+                            <NuxtImg
+                                src="/images/bakery/gallery/torty.jpg"
+                                alt="Торт Normatisse Bakery з ягодами"
+                                class="aspect-[4/5] w-full rounded-[calc(var(--brand-radius-panel)-0.5rem)] object-cover"
+                                width="560"
+                                height="700"
+                                sizes="90vw lg:384px"
+                                preload
+                            />
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <!-- Decoration column: empty spacer that reserves the 5/12 width on desktop only -->
-        <div class="hidden lg:block lg:col-span-5" aria-hidden="true" />
-    </div>
+    </section>
 </template>
-
-<style scoped>
-/* One-shot load-in fade for the content column (direction note §1). */
-.hero-fade-in {
-    animation: hero-fade-in 400ms ease-out both;
-}
-
-@keyframes hero-fade-in {
-    from {
-        opacity: 0;
-        transform: translateY(1rem);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .hero-fade-in {
-        animation: hero-fade-in-reduced 400ms ease-out both;
-    }
-
-    @keyframes hero-fade-in-reduced {
-        from {
-            opacity: 0;
-        }
-        to {
-            opacity: 1;
-        }
-    }
-}
-</style>
