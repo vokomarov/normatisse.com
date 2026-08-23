@@ -176,9 +176,13 @@ html {
    Layout primitives
    ========================================================================== */
 
-/* Full-bleed band that still keeps its content on the page grid. */
+/* Full-bleed band that still keeps its content on the page grid.
+   `clip`, not `hidden`: `overflow: hidden` makes the band a scroll container, and
+   a scroll container that cannot scroll gives every `animation-timeline: view()`
+   inside it a dead timeline — the parallax layers freeze at one value. `clip`
+   cuts the same pixels without the scroll semantics. */
 .brand-band {
-    @apply relative w-full overflow-hidden;
+    @apply relative w-full overflow-clip;
 }
 
 .brand-band__inner {
@@ -208,6 +212,17 @@ html {
         box-shadow: 0 1px 2px color-mix(in oklab, var(--color-watercourse-900) 8%, transparent),
                     0 28px 48px -24px color-mix(in oklab, var(--color-watercourse-900) 34%, transparent);
     }
+}
+
+/* One line of quote copy set in its own solid bar over photography. The bar is
+   the contrast device, which is what lets the scrim under it stay light enough
+   for the photo to still read. No `display`: the parent is a flex column and the
+   bar takes its width from the text. Colour comes from the call site.
+
+   Square corners, no shadow: the bars stack flush, so any shadow lands on the
+   bar below as a smudge instead of lifting the block. */
+.brand-quote-line {
+    @apply px-5 py-2 sm:px-6 sm:py-2.5;
 }
 
 /* Chip used for constructor options and product detail values. */

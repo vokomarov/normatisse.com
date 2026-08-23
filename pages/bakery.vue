@@ -3,6 +3,7 @@ import BakeryHero from '@/components/BakeryHero.vue';
 import BakeryProducts from '@/components/BakeryProducts.vue';
 import BakeryGallery from '@/components/BakeryGallery.vue';
 import BakeryReviews from '@/components/BakeryReviews.vue';
+import BakeryManifesto from '@/components/BakeryManifesto.vue';
 import BakeryContact from '@/components/BakeryContact.vue';
 import BakeryFooter from '@/components/BakeryFooter.vue';
 import BrandSection from '@/components/BrandSection.vue';
@@ -29,8 +30,10 @@ useSeoMeta({
             <BakeryProducts />
         </BrandSection>
 
-        <!-- The page's single dark band. Everything before and after it is light,
-             so the flip reads as one deliberate accent rather than a stripe pattern. -->
+        <!-- The page's single dark *surface*. Everything before and after it is
+             light, so the flip reads as one deliberate accent rather than a
+             stripe pattern. The manifesto band below is a photograph, not a
+             surface flip — a different device, counted separately. -->
         <BrandSection id="gallery" surface="deep" curve-top>
             <BakeryGallery />
         </BrandSection>
@@ -38,6 +41,8 @@ useSeoMeta({
         <BrandSection id="reviews" surface="white" curve-top>
             <BakeryReviews />
         </BrandSection>
+
+        <BakeryManifesto />
 
         <BrandSection id="contact" surface="blush">
             <BakeryContact />

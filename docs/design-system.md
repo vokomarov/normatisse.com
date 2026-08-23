@@ -54,6 +54,11 @@ Every full-bleed band picks exactly one:
 and after it is light. The flip has to read as one deliberate accent, not a
 stripe pattern. On `/bakery` that band is the gallery.
 
+**A media band is not a surface flip.** A band whose background is a photograph
+(the manifesto) is counted separately from the dark-surface budget above — it is
+a different device, and the two do not compete as long as they are not adjacent.
+A page gets at most one of each. See §3, *Media bands*.
+
 ---
 
 ## 2. Type
@@ -81,6 +86,12 @@ but any long Cyrillic string belongs in Onest.
 Italic display type needs descender room: keep `leading-[1.15]` and a `pb-1`
 reserve on any wrapper (see the hero's `make day sweeter`).
 
+**A Latin word inside Cyrillic copy takes the display face.** `wow!` and `norm`
+in the manifesto are set `font-display italic` in blush. The face has the
+coverage, the switch is invisible to a Ukrainian reader as a font change, and it
+ties the line back to the wordmark. This is the only sanctioned mixed-family
+emphasis: within one language, emphasise with weight or italic of the same face.
+
 **Josefin has no tabular figures.** Any vertical list numbered in the display
 face (the contact steps, any future ordered list) must put the numeral in a
 fixed-width grid column — `grid grid-cols-[2.5rem_1fr]` — not in a flex row with
@@ -93,10 +104,17 @@ agree.
 ## 3. Layout
 
 ```
-.brand-band          full-bleed, relative, overflow-hidden — owns the surface
+.brand-band          full-bleed, relative, overflow-clip — owns the surface
   [decoration]       absolutely positioned parallax / particle layers
   .brand-band__inner mx-auto max-w-[76rem] px-5 sm:px-8 lg:px-10
 ```
+
+`overflow-clip`, **not** `overflow-hidden`. `hidden` makes the band a scroll
+container; a scroll container that cannot scroll hands every
+`animation-timeline: view()` inside it a dead timeline, and the parallax layers
+freeze at one transform for the whole page. `clip` cuts the same pixels without
+the scroll semantics. Do not "tidy" this back to `hidden` — it silently kills
+all parallax on the page, with no error and no visual clue beyond stillness.
 
 `--ui-container: 76rem`. Sections never set their own background or outer
 padding — `<BrandSection>` owns vertical rhythm (`py-20 sm:py-24 lg:py-32`) and
@@ -129,6 +147,87 @@ fake it with `-mb-10 sm:-mb-14` on the CTA wrapper. Measuring against
 `section.getBoundingClientRect().bottom` is what hides this — the curve means
 the section box extends past the edge the reader actually sees. Measure to the
 *next* section's top instead.
+
+### Media bands
+
+A band whose background is a photograph rather than a surface token. One per
+page; on `/bakery` it is the manifesto, between the reviews and the order form.
+It is a pause, not a section — no heading, no CTA, just the quote.
+
+It does **not** use `<BrandSection>`: the vertical rhythm is a `min-h` plus its
+own padding, because the band is sized by the photo it has to show, not by the
+page's section rhythm.
+
+```html
+<section class="brand-band flex min-h-[24rem] items-center py-14
+                sm:min-h-[28rem] sm:py-16 lg:min-h-[32rem] lg:py-20">
+```
+
+Three layers, in order:
+
+1. **Photo layer.** `absolute -top-[20%] left-0 h-[140%] w-full`, carrying
+   `.brand-parallax` with `--parallax-from: 12%; --parallax-to: -12%`.
+   The sizing is not free choice. For a layer `k×` the band height translating
+   `±p` of *its own* height, the overhang is `(k−1)/2` of the band and the travel
+   is `p·k` of it, so the layer stays covered only while **`p·k ≤ (k−1)/2`**.
+   At `p = 12%` that needs `k ≥ 1.32`; `k = 1.4` is the value in use, giving
+   ±97px of travel inside a 115px overhang. Raising the travel without raising
+   the height is what pulls a hard edge into the band mid-scroll.
+2. **Scrim.** A light flat tint (`bg-watercourse-950/25`) plus one vertical
+   gradient that darkens only the top and bottom edges, where the band meets the
+   pale surfaces above and below. It is *not* the contrast device — the bars in
+   layer 3 are. Keeping it light is what lets the photo still read as a
+   photograph; a scrim heavy enough to carry text turns the band to mush.
+3. **Content**, inside `.brand-band__inner` as usual.
+
+**Put the contrast in the bar, not in the scrim.** Each line of quote copy sits
+in its own solid `.brand-quote-line` bar. That decouples the two jobs: the bar
+guarantees legibility at a measured ratio regardless of what pixel is behind it,
+and the scrim is then free to stay light. It also removes the failure mode of a
+scrim-only band, where the *average* luminance passes but the brightest pixel
+under the text does not.
+
+**`.brand-quote-line` contract.** The class carries padding — nothing else. No
+`display`, no `width`, no colour, and deliberately **no border-radius and no
+shadow**: the bars stack flush in pairs, so rounded corners leave notches where
+the edges meet and a shadow lands on the bar below as a smudge rather than
+lifting the block. The fill alone separates the bars from the photo. The parent
+is a flex column, so each bar hugs its own text, and the call site sets the fill
+and text colour. Setting `display` here would lose to the utility layer anyway
+(§3, cascade order).
+
+**Layout: two flush pairs, not four evenly-spaced lines.** Gap `0` inside a pair,
+`gap-5 sm:gap-6` between them, so the block reads as two statements rather than
+four fragments.
+
+- **Claim + aside.** Wrapper is `flex flex-col items-start`, which sizes it to
+  the *longer* line — the claim. The aside then takes `self-end` plus an inset
+  (`mr-4 sm:mr-8 lg:mr-10`) so it hangs off the claim's right end without ever
+  reaching it. This depends on the claim staying the wider of the two at every
+  breakpoint; if the aside ever grows past it, the wrapper resizes to the aside
+  and the step inverts.
+- **The two notes.** Wrapper is `flex flex-col items-center` — both centred, so
+  the pair sits symmetric under the asymmetric one above it.
+
+**Bar colour ladder**, descending in weight so the eye reads the lines in order,
+each ratio measured rather than eyeballed:
+
+| Line | Fill | Text | Ratio |
+| --- | --- | --- | --- |
+| Claim | `from-white via-white to-blush-50` | `watercourse-800` | 6.9:1 |
+| Aside | `from-blush-600 to-blush-800` | `white` | 4.4–6.0:1 |
+| Notes (×2) | `watercourse-950/90 → watercourse-900/80` + `backdrop-blur-[2px]` | `--brand-on-deep` | ~14:1 |
+
+`blush-500` is the tempting fill for the aside and it fails — 3.1:1 against
+white. `blush-600` is the lightest pink that clears 4.5:1. The two note bars are
+translucent on purpose: at 80–90% with a 2px backdrop blur the photo still moves
+behind them, which is what keeps four stacked bars from reading as a solid panel.
+
+**Copy shape.** One line per phrase, each in its own bar. Cap the mobile size of
+the longest line so it never wraps — at 390px the claim only fits unwrapped at
+`text-2xl`, and a wrapped line orphans its trailing emoji onto a row of its own,
+doubling the bar height. Measure the rendered bar heights at 390 and 640 before
+calling it done.
 
 ### Horizontal rails (mobile carousels)
 
@@ -245,6 +344,18 @@ CSS scroll-driven animations (`animation-timeline: view()`) where supported;
 `composables/useParallax.ts` provides a rAF + IntersectionObserver fallback for
 Firefox. No scroll event listeners anywhere.
 
+Two things silently freeze it, and neither raises an error:
+
+- An ancestor with `overflow: hidden` (see §3 — the band uses `overflow-clip`).
+- Verifying it in the console by scrolling and reading `getComputedStyle` in the
+  *same* task. The timeline advances on the next frame, so a synchronous loop
+  reports one identical transform at every scroll position and looks exactly
+  like the bug. Scroll, yield a frame, then read.
+
+The JS fallback measures the layer's **parent**, never the layer itself: the
+layer carries the transform the loop writes, so reading its own
+`getBoundingClientRect()` feeds the offset back into the progress.
+
 **Reveal** — `.brand-reveal` + `composables/useReveal.ts` (called by
 `<BrandSection>`). The composable adds `.is-armed` at mount *before* observing,
 so nothing is hidden when the script never runs (no-JS, print, full-page
@@ -274,7 +385,9 @@ All three respect `prefers-reduced-motion: reduce`, as does `scroll-behavior`.
   there is more than one item. Every clickable image on the site opens this, not
   a section-local modal.
 - **`<BakerySprinkleField>`** — `density` (particles per 100k px²). Needs a
-  positioned, `overflow-hidden` ancestor.
+  positioned, clipping ancestor (`.brand-band` is one).
+- **`<BakeryManifesto>`** — the page's media band. No props: the photo, the copy
+  and the placement (after the reviews) are the component. See §3, *Media bands*.
 - **`<SprinkleScatter>`** — static SVG sprinkle motif. Fixed `44×44` root;
   position it with a sized wrapper, not with props.
 - **`<BakeryFooter>`** — page footer; anchors match the `id`s on `BrandSection`.
@@ -328,13 +441,30 @@ whose label toggles with the state. The button carries `aria-expanded` and
 - **`@nuxt/image` `sizes` is not the HTML `sizes` attribute.** It takes
   breakpoint-keyed values (`100vw sm:50vw lg:384px`). Raw media queries with
   `rem` units produce an empty `srcset` and no `src` at all.
+- **Never pass `width`/`height` *and* `sizes` to the same `<NuxtImg>`.** The pair
+  is read as the intrinsic ratio for the srcset maths and the result can be a
+  `_ipx/s_2x2/…` variant — a literal 2×2 pixel image, served with no error.
+  Pick one: fixed `width`/`height` for a fixed-size image, `sizes` for a
+  responsive one.
+- **A full-bleed image wants explicit pixel widths in `sizes`, not `100vw`.**
+  `100vw` on a full-width band emits junk `1w` and `2w` srcset candidates and can
+  leave the browser picking the 1600px file on a phone. `sizes="480px sm:768px
+  lg:1280px xl:1600px"` gives a clean ladder.
+- **Bake EXIF rotation in.** iPhone HEIC exports carry orientation 6; `sips`
+  keeps the flag, and the served variant comes out sideways or square. Pipe the
+  file through `sharp().rotate()` once, at import time, and commit the rotated
+  JPEG.
 - **Pre-cropped screenshots** (reviews) use a plain `<img>` with their real
   intrinsic height. Running them through `NuxtImg` with a single fixed
   width/height crops them to one ratio.
-- **Never `object-cover` a screenshot.** A rail needs one uniform card height,
-  but these images lead with a product photo and carry the text at the bottom,
-  so cropping to a fixed height hides the only content that matters. Use
-  `h-[26rem] object-contain sm:h-auto` and let the lightbox show the full image.
+- **Crop screenshots to the card, but pick the anchor per file.**
+  `object-contain` in a fixed-height card letterboxes every image that is not the
+  card's ratio, and the white bars read as a bug. `object-cover` alone crops the
+  message text off whichever screenshots do not happen to carry it in the middle.
+  The reviews carry a per-item `focus` (`object-top` / `object-bottom` /
+  `object-center`) naming where the text sits in that file; the crop keeps that
+  and drops the product photo on the other side. Above `sm` the cards are
+  `h-auto` and none of this applies. The lightbox always shows the full image.
 - Page `<style>` blocks that re-`@import "tailwindcss"` ship a second Tailwind
   build. Only `pages/index.vue` still does this, because its `.offer-card`
   `@apply` depends on it.

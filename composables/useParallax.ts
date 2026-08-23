@@ -32,7 +32,10 @@ export function useParallax(target: Ref<HTMLElement | null>) {
         const el = target.value
         if (!el || !visible) return
 
-        const rect = el.getBoundingClientRect()
+        // Measure the parent, not the element: `el` carries the transform this
+        // loop writes, so reading its own rect feeds the offset back into the
+        // progress and the motion drifts.
+        const rect = (el.parentElement ?? el).getBoundingClientRect()
         const travel = window.innerHeight + rect.height
         // 0 when the element is entering from the bottom, 1 when it has fully left.
         const progress = travel > 0 ? (window.innerHeight - rect.top) / travel : 0
