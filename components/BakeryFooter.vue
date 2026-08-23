@@ -15,14 +15,16 @@ const links = [
     <footer class="brand-band border-t border-watercourse-100 bg-[var(--brand-surface)] py-12">
         <div class="brand-band__inner">
             <div class="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
-                <!-- The wordmark is the way back to the rest of Normatisse. -->
-                <NuxtLink to="/" class="brand-focus block w-fit rounded-2xl" aria-label="На головну Normatisse">
+                <!-- The wordmark is the way back to the rest of Normatisse. No
+                     aria-label: it would replace the visible text with words
+                     the label does not contain (WCAG 2.5.3). -->
+                <NuxtLink to="/" class="brand-focus block w-fit rounded-2xl">
                     <img
                         class="w-40 transition-opacity duration-200 hover:opacity-80"
                         src="/images/logo-bakery-full.svg"
                         alt="Normatisse Bakery"
-                        width="320"
-                        height="75"
+                        width="332"
+                        height="48"
                         loading="lazy"
                     >
                     <span class="sub-logo-font mt-2 block pb-0.5 text-base leading-[1.15]">make day sweeter</span>
@@ -58,12 +60,20 @@ const links = [
 
             <div class="mt-10 flex flex-wrap items-center justify-between gap-3">
                 <p class="text-xs text-stone-500">&copy; {{ year }} Normatisse. All rights reserved.</p>
-                <NuxtLink
-                    to="/"
-                    class="brand-focus rounded-full text-xs text-stone-600 transition-colors hover:text-watercourse-700"
-                >
-                    Normatisse — Bakery &amp; Photography
-                </NuxtLink>
+                <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+                    <NuxtLink
+                        to="/privacy"
+                        class="brand-focus rounded-full text-xs text-stone-600 transition-colors hover:text-watercourse-700"
+                    >
+                        Політика конфіденційності
+                    </NuxtLink>
+                    <NuxtLink
+                        to="/"
+                        class="brand-focus rounded-full text-xs text-stone-600 transition-colors hover:text-watercourse-700"
+                    >
+                        Normatisse — Bakery &amp; Photography
+                    </NuxtLink>
+                </div>
             </div>
         </div>
     </footer>

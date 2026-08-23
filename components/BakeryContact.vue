@@ -52,7 +52,9 @@ const steps = [
                                 <span class="text-xs font-medium tracking-wide text-stone-500">{{ channel.label }}</span>
                                 <span class="truncate text-base font-semibold text-watercourse-800">{{ channel.value }}</span>
                             </span>
-                            <UIcon name="i-lucide-arrow-up-right" class="ml-auto size-4 shrink-0 text-stone-400" />
+                            <!-- stone-400 lands under the 3:1 floor for non-text
+                                 graphics on this surface; stone-500 clears it. -->
+                            <UIcon name="i-lucide-arrow-up-right" class="ml-auto size-4 shrink-0 text-stone-500" />
                         </UButton>
                     </li>
                 </ul>

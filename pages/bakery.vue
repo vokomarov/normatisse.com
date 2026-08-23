@@ -8,15 +8,77 @@ import BakeryContact from '@/components/BakeryContact.vue';
 import BakeryFooter from '@/components/BakeryFooter.vue';
 import BrandSection from '@/components/BrandSection.vue';
 
-const description = 'Торти, кекси, капкейки та мадлен на замовлення у Вінниці. Make day sweeter.';
+const { siteUrl } = useRuntimeConfig().public;
+const { phone, instagram } = useBakeryContacts();
+
+const title = 'Normatisse Bakery — домашня випічка на замовлення';
+const description = 'Бісквітні торти, кекси, капкейки та мадлен на замовлення у Вінниці. Готові смаки або конструктор свого торта, від 850 грн/кг. Make day sweeter.';
 
 useSeoMeta({
-    title: 'Normatisse Bakery — домашня випічка на замовлення',
-    ogTitle: 'Normatisse Bakery — домашня випічка на замовлення',
+    title,
+    ogTitle: title,
     description,
     ogDescription: description,
-    ogImage: '/images/logo-bakery-full.svg',
+    ogImage: `${siteUrl}/images/logo-bakery-full.svg`,
     twitterCard: 'summary_large_image',
+})
+
+// Home bakery: there is no shop to walk into, so the address stops at the city
+// and `openingHours` is omitted rather than invented. Orders go through the
+// messenger channels, which is what `contactPoint` describes.
+const businessSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Bakery',
+    '@id': `${siteUrl}/bakery#business`,
+    name: 'Normatisse Bakery',
+    url: `${siteUrl}/bakery`,
+    description,
+    image: `${siteUrl}/images/bakery/gallery/torty.jpg`,
+    logo: `${siteUrl}/images/logo-bakery-full.svg`,
+    telephone: phone,
+    priceRange: 'від 850 ₴/кг',
+    currenciesAccepted: 'UAH',
+    address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Вінниця',
+        addressCountry: 'UA',
+    },
+    areaServed: { '@type': 'City', name: 'Вінниця' },
+    sameAs: [instagram],
+    contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'customer service',
+        telephone: phone,
+        availableLanguage: ['uk'],
+    },
+    parentOrganization: { '@id': `${siteUrl}/#organization` },
+};
+
+// Separate block, not a `@graph` entry — see the note on the home page. Dates
+// are hand-maintained: they track the copy, not the build.
+const pageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${siteUrl}/bakery#webpage`,
+    url: `${siteUrl}/bakery`,
+    name: title,
+    description,
+    inLanguage: 'uk',
+    datePublished: '2026-08-22',
+    dateModified: '2026-08-23',
+    about: { '@id': `${siteUrl}/bakery#business` },
+    author: { '@id': `${siteUrl}/#organization` },
+    publisher: { '@id': `${siteUrl}/#organization` },
+};
+
+useHead({
+    // Wordmark is the hero's LCP element; preload it so it is not blocked behind
+    // the hero markup and the parallax photo.
+    link: [{ rel: 'preload', as: 'image', href: '/images/logo-bakery-full.svg' }],
+    script: [businessSchema, pageSchema].map(schema => ({
+        type: 'application/ld+json',
+        innerHTML: JSON.stringify(schema),
+    })),
 })
 </script>
 

@@ -23,11 +23,18 @@ useParallax(photoLayer);
             style="--parallax-from: 12%; --parallax-to: -12%"
             aria-hidden="true"
         >
+            <!-- Decorative band: the photo sits under a scrim with solid text
+                 bars over it, so 1x at 1280 is the useful ceiling. At 2x the
+                 1800px source would be upscaled to 2560 for no visible gain. -->
             <NuxtImg
                 src="/images/bakery/manifesto.jpg"
                 alt=""
                 class="h-full w-full object-cover object-center"
-                sizes="480px sm:768px lg:1280px xl:1600px"
+                preset="photo"
+                width="1280"
+                height="853"
+                sizes="480px sm:768px lg:1280px"
+                densities="1x"
                 loading="lazy"
             />
         </div>

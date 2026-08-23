@@ -23,17 +23,24 @@ useParallax(blobLayer);
         <div class="brand-band__inner">
             <div class="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
                 <div class="lg:col-span-7">
-                    <img
-                        class="w-full max-w-[19rem] sm:max-w-sm lg:max-w-md"
-                        src="/images/logo-bakery-full.svg"
-                        alt="Normatisse Bakery"
-                        width="640"
-                        height="150"
-                    >
+                    <!-- Wordmark plus tagline is the page heading; the H1 wraps
+                         both so the accessible name reads as one line, and the
+                         visible tagline keeps the heading non-empty for crawlers
+                         that skip alt text. -->
+                    <h1>
+                        <img
+                            class="w-full max-w-[19rem] sm:max-w-sm lg:max-w-md"
+                            src="/images/logo-bakery-full.svg"
+                            alt="Normatisse Bakery"
+                            width="332"
+                            height="48"
+                            fetchpriority="high"
+                        >
 
-                    <p class="sub-logo-font mt-4 pb-1 text-2xl leading-[1.15] sm:text-3xl lg:text-4xl">
-                        make day sweeter
-                    </p>
+                        <span class="sub-logo-font mt-4 block pb-1 text-2xl leading-[1.15] sm:text-3xl lg:text-4xl">
+                            make day sweeter
+                        </span>
+                    </h1>
 
                     <p class="brand-lead mt-6 max-w-lg">
                         Домашні торти, кекси, капкейки та мадлен на замовлення у Вінниці.
@@ -73,6 +80,7 @@ useParallax(blobLayer);
                                 src="/images/bakery/gallery/torty.jpg"
                                 alt="Торт Normatisse Bakery з ягодами"
                                 class="aspect-[4/5] w-full rounded-[calc(var(--brand-radius-panel)-0.5rem)] object-cover"
+                                preset="photo"
                                 width="560"
                                 height="700"
                                 sizes="90vw lg:384px"

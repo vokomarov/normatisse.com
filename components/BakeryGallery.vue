@@ -40,6 +40,7 @@ const activeIndex = ref<number | null>(null);
                     :src="shot.src"
                     :alt="shot.alt"
                     class="h-full w-full object-cover transition-transform duration-700 ease-[var(--brand-ease)] group-hover:scale-[1.06]"
+                    preset="photo"
                     width="800"
                     height="800"
                     :sizes="index === 0 ? '100vw lg:640px' : '50vw lg:320px'"
@@ -49,7 +50,9 @@ const activeIndex = ref<number | null>(null);
                     class="pointer-events-none absolute inset-0 bg-watercourse-950/0 transition-colors duration-300 group-hover:bg-watercourse-950/25"
                     aria-hidden="true"
                 />
-                <span class="sr-only">Відкрити фото: {{ shot.alt }}</span>
+                <!-- The image alt already names the shot; this only adds the
+                     verb, so the button does not read the subject twice. -->
+                <span class="sr-only">— відкрити фото</span>
             </button>
         </div>
 

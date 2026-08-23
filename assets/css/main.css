@@ -402,3 +402,9 @@ html {
     outline: 3px solid var(--color-blush-500);
     outline-offset: 3px;
 }
+
+/* Bypass block: off-screen until focused, then pinned over the hero. */
+.brand-skip-link {
+    @apply fixed top-0 left-0 z-50 -translate-y-full rounded-b-2xl bg-watercourse-800 px-5 py-3 text-sm font-semibold text-white;
+    @apply focus-visible:translate-y-0 focus-visible:outline-3 focus-visible:outline-offset-[-6px] focus-visible:outline-blush-300;
+}

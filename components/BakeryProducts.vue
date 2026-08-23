@@ -188,6 +188,7 @@ const isBuilderOpen = ref(false);
                     :src="torty.photo"
                     :alt="`${torty.name} Normatisse Bakery`"
                     class="h-56 w-full object-cover sm:h-72 lg:h-full lg:min-h-[34rem]"
+                    preset="photo"
                     width="900"
                     height="1200"
                     sizes="100vw lg:544px"
@@ -209,17 +210,18 @@ const isBuilderOpen = ref(false);
                      composition, so the price row is never a bare label. -->
                 <div class="brand-panel p-5 sm:p-6">
                     <p class="brand-term">Готові смаки</p>
+                    <!-- A `div` inside a `dl` may contain only `dt`/`dd`, so the
+                         name/price row is laid out with a grid on the group
+                         rather than a wrapper element around the pair. -->
                     <dl class="mt-4 space-y-4">
                         <div
                             v-for="flavour in torty.flavours"
                             :key="flavour.label"
-                            class="border-b border-watercourse-100 pb-4 last:border-b-0 last:pb-0"
+                            class="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-4 border-b border-watercourse-100 pb-4 last:border-b-0 last:pb-0"
                         >
-                            <div class="flex items-baseline justify-between gap-4">
-                                <dt class="min-w-0 font-semibold text-watercourse-900">{{ flavour.label }}</dt>
-                                <dd class="brand-price text-lg sm:text-xl">{{ flavour.price }}</dd>
-                            </div>
-                            <dd class="mt-1.5 text-sm leading-relaxed text-stone-600">{{ flavour.description }}</dd>
+                            <dt class="min-w-0 font-semibold text-watercourse-900">{{ flavour.label }}</dt>
+                            <dd class="brand-price text-lg sm:text-xl">{{ flavour.price }}</dd>
+                            <dd class="col-span-2 mt-1.5 text-sm leading-relaxed text-stone-600">{{ flavour.description }}</dd>
                         </div>
                     </dl>
                 </div>
@@ -286,6 +288,7 @@ const isBuilderOpen = ref(false);
                         :src="product.photo"
                         :alt="`${product.name} Normatisse Bakery`"
                         class="aspect-[4/3] w-full object-cover"
+                        preset="photo"
                         width="640"
                         height="480"
                         sizes="100vw sm:50vw lg:384px"
