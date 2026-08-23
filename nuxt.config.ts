@@ -16,6 +16,10 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  // Keep the dev server from restarting on prose edits. These paths hold no
+  // code the build reads.
+  ignore: ['docs/**', '**/*.md'],
+
   fonts: {
     families: [
       // Display face: Latin brand words only (no Cyrillic coverage).

@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
+/* Tailwind v4 auto-detects sources and would otherwise scan (and watch) every
+   markdown file in the repo, rebuilding the CSS on every docs edit. */
+@source not "../../docs";
+@source not "../../*.md";
+
 /* ==========================================================================
    Normatisse brand design system
    Tokens here are page-agnostic: /bakery is the first consumer, other pages
