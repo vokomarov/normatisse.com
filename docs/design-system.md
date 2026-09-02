@@ -494,10 +494,22 @@ scans; screenshot under it because that is what makes the quote believable.
   messages; a plausible-sounding name would be fabricated.
 - `alt` describes the screenshot for someone who cannot see it. It is not a
   second copy of the quote.
-- On the mobile rail the image is cropped to a single fixed height with a
-  per-item `object-*` anchor pointing at the message text; above `sm` it goes
-  `h-auto` and the masonry column absorbs the difference. The lightbox always
-  shows the whole file.
+- The screenshot is cropped to a **fixed aspect box at every breakpoint**
+  (`aspect-[2/3]` on the `<img>`, `object-cover`, per-item `object-*` anchor).
+  A per-item `aspect` override is expected, not exceptional: a file whose
+  message band and subject cannot both fit the default box gets its own.
+- **`aspect` is the height knob; the `height` attribute is not.** See §9.
+- The anchor is per file and must be checked against the actual screenshot —
+  an Instagram story caption sits at the top as often as a reply bubble sits at
+  the bottom. Getting it wrong crops the message off and leaves a card that
+  looks fine and proves nothing.
+- **The cards are a stretched grid, not masonry.** One shared crop box leaves
+  quote length as the only variable, and ragged card bottoms across three
+  near-identical screenshots read as a bug rather than as rhythm. The text block
+  is stretched to the tallest quote (`sm:auto-rows-fr` on the grid, `sm:h-full`
+  on the card, `grow` on the `<blockquote>`) and the caption is pinned to its
+  bottom with `mt-auto`, so every screenshot starts on the same baseline. The
+  lightbox always shows the whole file.
 
 ### Disclosure
 
@@ -532,6 +544,15 @@ whose label toggles with the state. The button carries `aria-expanded` and
   `100vw` on a full-width band emits junk `1w` and `2w` srcset candidates and can
   leave the browser picking the 1600px file on a phone. `sizes="480px sm:768px
   lg:1280px xl:1600px"` gives a clean ladder.
+- **Strip EXIF before committing a photo.** iPhone captures carry GPS to ~5 m,
+  the body and lens model, and the capture timestamp. This is a home bakery: §
+  "Deliberate non-fixes" withholds the street address from the schema on
+  purpose, and shipping coordinates in EXIF hands out the same thing by another
+  route. Three gallery photos reached production this way before the audit of
+  2026-09-02. iPhone JPEGs also append a whole second JPEG after the primary
+  `EOI` (the HDR gain map, 100–450 KB) that no browser reads. Rebuild the file
+  from its segments — keep JFIF, ICC and Adobe, drop APP1/APP3-13/APP15/COM and
+  the trailing image — rather than re-encoding, which costs a generation.
 - **Bake EXIF rotation in.** iPhone HEIC exports carry orientation 6; `sips`
   keeps the flag, and the served variant comes out sideways or square. Pipe the
   file through `sharp().rotate()` once, at import time, and commit the rotated
@@ -539,14 +560,26 @@ whose label toggles with the state. The button carries `aria-expanded` and
 - **Pre-cropped screenshots** (reviews) use a plain `<img>` with their real
   intrinsic height. Running them through `NuxtImg` with a single fixed
   width/height crops them to one ratio.
+- **The `height` attribute never changes rendered height.** It only reserves a
+  box before the file decodes; afterwards the intrinsic ratio governs, because
+  Tailwind preflight forces `height: auto`. Editing it looks like a no-op and is
+  one. To change how tall an image renders, set `aspect-[w/h]` (or an explicit
+  `h-*`) and give it `object-cover`. Keep `width`/`height` equal to the file's
+  real pixel dimensions — `BrandLightbox` reads them too, so a made-up pair
+  reserves a wrong-ratio box there as well.
+- **`h-full` on a `<BrandRail>` child cancels the rail's own stretch.** Below the
+  hand-over breakpoint the rail is a flex row, where cards equalise via
+  `align-items: stretch` — and stretch only applies while the cross-size is
+  `auto`. An unqualified `h-full` sets an explicit height, opts the card out, and
+  the rail goes ragged while the desktop grid looks right. Gate it: `sm:h-full`.
 - **Crop screenshots to the card, but pick the anchor per file.**
   `object-contain` in a fixed-height card letterboxes every image that is not the
   card's ratio, and the white bars read as a bug. `object-cover` alone crops the
   message text off whichever screenshots do not happen to carry it in the middle.
   The reviews carry a per-item `focus` (`object-top` / `object-bottom` /
   `object-center`) naming where the text sits in that file; the crop keeps that
-  and drops the product photo on the other side. Above `sm` the cards are
-  `h-auto` and none of this applies. The lightbox always shows the full image.
+  and drops the product photo on the other side. The crop applies at every
+  breakpoint. The lightbox always shows the full image.
 - Page `<style>` blocks that re-`@import "tailwindcss"` ship a second Tailwind
   build. Nothing does this any more — `pages/index.vue` was the last one and was
   fixed in `cd3e047`. Do not reintroduce it to make an `@apply` resolve; move the

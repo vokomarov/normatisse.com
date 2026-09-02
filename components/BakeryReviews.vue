@@ -1,56 +1,62 @@
 <script setup lang="ts">
 const { instagram } = useBakeryContacts();
 
+// The screenshots are full phone screens (1320 × 2346, ratio ~9:16). Shown
+// whole they would be a wall of photo with a small band of message in it, so
+// the card crops them to a box and the lightbox shows the full file.
+//
+// `aspect` is the crop box, and it applies at every breakpoint. Do not reach
+// for the `height` attribute for this: `height` on an `<img>` only reserves a
+// pre-load box, and once the file
+// decodes the intrinsic ratio takes over (Tailwind preflight forces
+// `height: auto`), so editing it changes nothing on screen.
+//
+// `focus` is where the message text sits in that file — the crop has to keep
+// it and may drop the product photo on the other side. Check a new screenshot
+// before assuming: it is `object-top` as often as `object-bottom`.
+//
 // `quote` transcribes the message burned into the screenshot, verbatim including
 // its typos — the section promises unedited screenshots and a tidied quote would
 // break that promise. It is the readable layer; the screenshot below it is the
 // receipt. `caption` names the order from what the photo shows, because these
 // are anonymous Direct messages and a fabricated customer name would be a lie.
-//
-// `focus` is where the message text sits in each file — that is the part the
-// rail crop must keep; the product photo above or below it can go. The lightbox
-// still shows the whole screenshot.
+
+/** Every screenshot is a 1320 × 2346 phone capture. */
+const SHOT_WIDTH = 1320;
+const SHOT_HEIGHT = 2346;
+
+/**
+ * Default crop. Keeps ~84% of a 9:16 capture: enough for the message band plus
+ * the product above or below it. Set `aspect` on a review to override.
+ */
+const SHOT_ASPECT = 'aspect-[2/3]';
+
 const reviews = [
     {
-        height: 666,
         focus: 'object-bottom',
-        quote: 'Тьотя і дружина куштували, то аж очі збільшили, сказали що нереально смачні!',
-        caption: 'Капкейки на день народження',
-        alt: 'Скріншот відгуку про капкейки з декором на день народження',
+        quote: 'Торт всім сподобався, спеціально всіх перепитала, від малечі до людей похилого віку. Все свіже, смачне, збалансоване. Дякуюємо!',
+        caption: 'Торт на ювілей 70 років',
+        alt: 'Скріншот відгуку про торт із золотою цифрою 70, гранатом і кокосовими кульками',
     },
     {
-        height: 490,
         focus: 'object-top',
-        quote: 'Мій романтичний солодкий подарунок коханому! Дякую за те, що втілили мою ідею.',
-        caption: 'Подарунковий набір горішків',
-        alt: 'Скріншот відгуку про подарунковий набір горішків зі стрічкою',
+        quote: 'Дякую за смаколики, які ми привезли до столу. У нас була лотерея: відгадай смак горішка.',
+        caption: 'Набір горішків асорті х25',
+        alt: 'Скріншот відгуку про коробку різнокольорових горішків асорті на святковому столі',
     },
     {
-        height: 548,
-        focus: 'object-bottom',
-        quote: 'Торт всім сподобався, спеціально всіх перепитала, від малечі до людей похилого віку. Все свіже, смачне, сбалансоване.',
-        caption: 'Торт на 70 років',
-        alt: 'Скріншот відгуку про ягідний торт із цифрою 70',
-    },
-    {
-        height: 601,
         focus: 'object-top',
-        quote: 'Щиро дякую за ароматний та смачнючий гарбузовий пиріг.',
-        caption: 'Гарбузовий пиріг',
-        alt: 'Скріншот відгуку про гарбузовий пиріг зі збитими вершками',
-    },
-    {
-        height: 601,
-        focus: 'object-center',
-        quote: 'Смакота!',
-        caption: 'Асорті мадлен',
-        alt: 'Скріншот відгуку про подарункову коробку мадлен',
+        quote: 'Це було дуже смачно і красиво, як завжди 🫱🏻‍🫲🏼🔥',
+        caption: 'Торт — Superman',
+        alt: 'Скріншот відгуку про шоколадний торт із золотим логотипом Superman',
     },
 ].map((review, i) => ({
+    aspect: SHOT_ASPECT,
     ...review,
     n: i + 1,
     src: `/images/bakery/reviews/review-${i + 1}.jpg`,
-    width: 414,
+    width: SHOT_WIDTH,
+    height: SHOT_HEIGHT,
 }));
 
 const activeIndex = ref<number | null>(null);
@@ -65,25 +71,32 @@ const activeIndex = ref<number | null>(null);
             </p>
         </header>
 
-        <!-- Rail on phones, masonry from `sm` up. Quote first, screenshot under
-             it: the words are what a reader scans, the screenshot is the proof
-             they are real. The rail crops each card to one height and the
-             lightbox shows the full screenshot. -->
+        <!-- Rail on phones, grid from `sm` up. Quote first, screenshot under it:
+             the words are what a reader scans, the screenshot is the proof they
+             are real. Not masonry — the screenshots share one crop box, so the
+             quotes are the only variable, and stretching every card lines the
+             screenshots up on one baseline regardless of quote length. The rail
+             stretches its cards on its own; the grid needs `auto-rows-fr` plus
+             `h-full`, and that `h-full` must stay behind `sm:` because an
+             explicit height cancels the rail's cross-axis stretch. -->
         <BrandRail
             class="brand-reveal mt-12"
             from="sm"
-            desktop="sm:block sm:columns-2 lg:columns-3"
+            desktop="sm:grid sm:auto-rows-fr sm:grid-cols-2 lg:grid-cols-3"
             label="Відгуки клієнтів"
         >
             <article
                 v-for="(review, index) in reviews"
                 :key="review.n"
-                class="brand-card flex-col overflow-hidden sm:mb-5 sm:break-inside-avoid"
+                class="brand-card flex-col overflow-hidden sm:h-full"
                 :style="{ '--reveal-delay': `${index * 60}ms` }"
             >
-                <blockquote class="px-5 pt-5 pb-4">
+                <!-- The caption is pinned to the bottom of the stretched text
+                     block, so every caption sits on the same baseline just above
+                     its screenshot instead of floating after a short quote. -->
+                <blockquote class="flex grow flex-col px-5 pt-5 pb-4">
                     <p class="text-sm leading-relaxed text-stone-700">{{ review.quote }}</p>
-                    <footer class="brand-term mt-3 block">{{ review.caption }}</footer>
+                    <footer class="brand-term mt-auto block pt-3">{{ review.caption }}</footer>
                 </blockquote>
 
                 <button
@@ -94,8 +107,8 @@ const activeIndex = ref<number | null>(null);
                     <img
                         :src="review.src"
                         :alt="review.alt"
-                        class="h-56 w-full object-cover sm:h-auto"
-                        :class="review.focus"
+                        class="w-full object-cover"
+                        :class="[review.aspect, review.focus]"
                         :width="review.width"
                         :height="review.height"
                         loading="lazy"

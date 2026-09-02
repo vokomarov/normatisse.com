@@ -3,14 +3,26 @@ const { instagram } = useBakeryContacts();
 
 // Mosaic order is load-bearing: the span classes below assume this sequence
 // fills the 4-column grid exactly (12 cells over 3 rows) on desktop.
+
+const SQUARE_SM = '';
+const SQUARE_LG = 'col-span-2 row-span-2';
+const VERTICAL = 'lg:row-span-2';
+const HORIZONTAL = 'lg:col-span-2';
+
 const shots = [
-    { src: '/images/bakery/gallery/bento-1.jpg', alt: 'Бенто-торт з декором', span: 'col-span-2 row-span-2' },
-    { src: '/images/bakery/gallery/bento-2.jpg', alt: 'Бенто-торт з ягодами', span: 'lg:row-span-2' },
-    { src: '/images/bakery/gallery/bento-3.jpg', alt: 'Бенто-торт з написом', span: '' },
-    { src: '/images/bakery/gallery/torty.jpg', alt: 'Торт на замовлення', span: '' },
-    { src: '/images/bakery/gallery/kapkeiky.jpg', alt: 'Капкейки з кремом', span: 'lg:col-span-2' },
-    { src: '/images/bakery/gallery/keksy.jpg', alt: 'Шоколадні кекси', span: '' },
-    { src: '/images/bakery/gallery/madlen.jpg', alt: 'Мадлен у шоколаді', span: '' },
+    { src: '/images/bakery/gallery/cake-1.jpg', alt: 'Торт з дизайном на основі лохини', span: VERTICAL },
+    { src: '/images/bakery/gallery/nuts-1.jpg', alt: 'Набір Горішок Асорті', span: SQUARE_LG },
+    { src: '/images/bakery/gallery/cake-2.jpg', alt: 'Мусовий торт "Три шоколади"', span: VERTICAL },
+    { src: '/images/bakery/gallery/nuts-3.jpg', alt: 'Набір горішків х25', span: HORIZONTAL },
+    { src: '/images/bakery/gallery/cookies-2.jpg', alt: 'Арахісове печиво з шоколадом', span: SQUARE_SM },
+    { src: '/images/bakery/gallery/cake-5.jpg', alt: 'Торт з дизайном "Бджілка мастика"', span: SQUARE_SM },
+    { src: '/images/bakery/gallery/cupcakes-2.jpg', alt: 'Шоколадні капкейки з карамеллю', span: SQUARE_SM },
+    { src: '/images/bakery/gallery/cake-3.jpg', alt: 'Торт з кумкватом', span: SQUARE_LG },
+    { src: '/images/bakery/gallery/cake-4.jpg', alt: 'Торт з вафельним папером і еустомами', span: SQUARE_SM },
+    { src: '/images/bakery/gallery/cake-6.jpg', alt: 'Торт "Superman"', span: VERTICAL },
+    { src: '/images/bakery/gallery/cupcakes-5.jpg', alt: 'Карамельні капкейки з цукерками', span: SQUARE_SM },
+    { src: '/images/bakery/gallery/cupcakes-4.jpg', alt: 'Шоколадні капкейки з крафтовими цукерками', span: SQUARE_SM },
+    { src: '/images/bakery/gallery/madlen-2.jpg', alt: 'Шоколадні мадлен', span: HORIZONTAL },
 ];
 
 const activeIndex = ref<number | null>(null);

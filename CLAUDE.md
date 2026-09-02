@@ -22,6 +22,8 @@ npx wrangler pages dev .output/public --port 3100 --ip 127.0.0.1
 curl -sI http://127.0.0.1:3100/
 ```
 
+Visual checks go through `agent-browser` (run `agent-browser skills get core` first), pointed at the wrangler preview above — not at `nuxt dev`, which ignores `_headers`. Two quirks: the CLI resets cwd between calls, so **screenshot paths must be absolute**; and `eval` calls share one scope, so a bare `const x` fails with "already declared" on the second call — wrap JS in an IIFE.
+
 **There is no test runner.** `@nuxt/test-utils` is installed and registered as a module (`.nuxtrc` pins its setup), but `package.json` has no `test` script and no test files exist. Wire up Vitest before claiming a test command works.
 
 Site audits use the `squirrel` CLI (`squirrel audit <url> -C surface --refresh`); config in `squirrel.toml`.
@@ -52,6 +54,8 @@ Nothing runs at request time. Server routes exist only to be prerendered — `se
 
 **`docs/design-system.md` is a mandatory read before any UI/UX change** — colour and contrast overrides, surface order, type roles, layout and CTA rhythm, media bands, rails, shape/elevation, the button scale, motion, component contracts, and the accumulated gotchas. It is the spec; the code is the implementation.
 
+The generic design skills (`/frontend-design`, `/design-taste-frontend`) assume React/Next/Motion/Phosphor and ban em-dashes. Neither applies here: the stack is Nuxt + Nuxt UI + Lucide/Simple Icons, and the Ukrainian тире is required punctuation, not an AI tell. `docs/design-system.md` and this file override those skills' defaults — use the skills for judgement, not for stack or typography rules.
+
 **Updating it is mandatory whenever a UI/UX decision is made.** A new token, a changed spacing rule, a component contract, a rejected approach and why — it goes in the document in the same change, not afterwards. A decision that only exists in the code is a decision the next person will unknowingly reverse.
 
 Two implementation layers, both must be checked before adding styles:
@@ -66,6 +70,7 @@ Never import Tailwind again inside an SFC `<style>` block — it duplicates the 
 - `Bakery*` — page sections of `/bakery`, composed in `pages/bakery.vue`.
 - `Brand*` — reusable primitives. `BrandSection` owns *all* section rhythm: surface colour, vertical padding, curved top edge, and the reveal trigger. Sections themselves never set background or outer padding. `BrandRail` is the mobile scroll-snap carousel that becomes a grid at a breakpoint. `BrandLightbox` is the gallery viewer.
 - `Background*` / `*Sprinkle*` — decorative, `aria-hidden`.
+- Section `id`s on `pages/bakery.vue` (`hero`, `products`, `gallery`, `reviews`, `contact`) are a public API: `BakeryFooter` anchors and `BakeryOrderBar`'s observers resolve them by `getElementById`. Rename one and the bar silently never appears.
 
 ### Motion
 
@@ -87,5 +92,5 @@ Audit findings left alone on purpose: no visible author byline or content dates 
 
 - 4-space indent in `.vue` and `.ts` under `components/`, `composables/`, `pages/`, `server/`; 2-space in `nuxt.config.ts` and `eslint.config.mjs`. Match the file you're in.
 - Comments explain *why* a non-obvious constraint exists (a browser quirk, a spec rule, a host behaviour). Keep them short; don't narrate what the code does.
-- All user-facing copy is Ukrainian.
+- All user-facing copy is Ukrainian. `docs/design-system.md` §8 carries the copy rules that are factual rather than stylistic — «готую» not «печу» (half the range is not baked), and lead time means when to *place* the order, never a turnaround.
 - `.env` exists at the repo root and is gitignored — don't read or commit it.

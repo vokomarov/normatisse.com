@@ -75,14 +75,14 @@ useParallax(photoLayer);
                         class="brand-quote-line brand-quote-line--note brand-reveal bg-watercourse-950/85 text-[0.9375rem] leading-relaxed text-[var(--brand-on-deep)] backdrop-blur-[2px] sm:text-base lg:text-lg"
                         style="--reveal-delay: 140ms"
                     >
-                        Можливо, не завжди <span class="font-display font-bold text-blush-300 italic">wow!</span>,
+                        Можливо, не завжди <span class="font-display font-bold text-2xl text-blush-300 italic">wow!</span>,
                     </p>
 
                     <p
                         class="brand-quote-line brand-quote-line--note brand-reveal bg-watercourse-950/85 text-[0.9375rem] leading-relaxed text-[var(--brand-on-deep)] backdrop-blur-[2px] sm:text-base lg:text-lg"
                         style="--reveal-delay: 210ms"
                     >
-                        але завжди, як мінімум <span class="font-display font-bold text-blush-300 italic">norm</span> 🫶
+                        але завжди, як мінімум <span class="font-display font-bold text-2xl text-blush-300 italic">norm</span> 🫶
                     </p>
                 </div>
             </blockquote>

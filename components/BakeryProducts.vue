@@ -35,7 +35,7 @@ interface Product {
 const torty = {
     name: 'Торти',
     lead: 'Бісквітні торти на замовлення. Візьміть один із готових смаків або зберіть свій.',
-    photo: '/images/bakery/gallery/torty.jpg',
+    photo: '/images/bakery/products/cake.jpg',
     from: 'від 850 грн/кг',
     flavours: [
         {
@@ -79,7 +79,7 @@ const products: Product[] = [
         slug: 'kapkeiky',
         name: 'Капкейки',
         lead: 'Шоколадні, ванільні, карамельні та лимонно-макові.',
-        photo: '/images/bakery/gallery/kapkeiky.jpg',
+        photo: '/images/bakery/products/cupcake.jpg',
         from: 'від 360 грн',
         priceCaption: 'За набір',
         prices: [
@@ -102,7 +102,7 @@ const products: Product[] = [
         slug: 'keksy',
         name: 'Кекси',
         lead: 'Великі порційні кекси без «шапочки».',
-        photo: '/images/bakery/gallery/keksy.jpg',
+        photo: '/images/bakery/products/keks-2.jpg',
         from: 'від 396 грн',
         priceCaption: 'За набір',
         prices: [
@@ -130,7 +130,7 @@ const products: Product[] = [
         slug: 'madlen',
         name: 'Мадлен',
         lead: 'Шоколадний, ванільний, кавовий та лимонно-маковий.',
-        photo: '/images/bakery/gallery/madlen.jpg',
+        photo: '/images/bakery/products/madlen.jpg',
         from: 'від 40 грн',
         priceCaption: 'Поштучно та асорті',
         prices: [
@@ -288,7 +288,7 @@ const isBuilderOpen = ref(false);
                     <NuxtImg
                         :src="product.photo"
                         :alt="`${product.name} Normatisse Bakery`"
-                        class="aspect-[4/3] w-full object-cover"
+                        class="aspect-4/3 w-full object-cover"
                         preset="photo"
                         width="640"
                         height="480"
