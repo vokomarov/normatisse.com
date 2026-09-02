@@ -423,6 +423,16 @@ All three respect `prefers-reduced-motion: reduce`, as does `scroll-behavior`.
 - **`<BakeryManifesto>`** — the page's media band. No props: the photo, the copy
   and the placement (after the hero, before the price list) are the component.
   See §3, *Media bands*.
+- **`<BakeryGallery>`** — the mosaic. Each shot names a **shape**, not a class
+  string, and a shape pairs its span classes with the `sizes` hint they imply.
+  Keeping the two together is the point: a shape that goes full width on mobile
+  must ask for a `100vw` candidate, and when `sizes` lived at the call site
+  (`index === 0 ? … : …`) every later respan silently under-fetched. The seven
+  shapes are `SQUARE_SM`, `SQUARE_LG`, `VERTICAL`, `HORIZONTAL` and the three
+  `WIDE_*` variants that are full-bleed on mobile only. **Shot order is
+  load-bearing** — the sequence tiles both grids exactly (24 cells over 6 rows at
+  `lg`, 22 over 11 below it), so reordering or respanning one shot can open a
+  hole further down. See §9.
 - **`<BakeryOrderBar>`** — mobile-only fixed order bar (`lg:hidden`, `z-40`).
   Three IntersectionObservers' worth of state in two: it **arms** once `#products`
   has been seen and then latches, and it is **suppressed** while `#hero` or
@@ -540,10 +550,29 @@ whose label toggles with the state. The button carries `aria-expanded` and
   `_ipx/s_2x2/…` variant — a literal 2×2 pixel image, served with no error.
   Pick one: fixed `width`/`height` for a fixed-size image, `sizes` for a
   responsive one.
+- **A grid item that spans 2 of 2 mobile columns cannot sit beside anything.**
+  CSS auto-placement moves an item that does not fit to the next row and leaves
+  the remainder of the current one empty — so on the 2-column mobile gallery any
+  1-wide shot immediately followed by a 2-wide one strands a hole to its right.
+  Trailing odd items do the same. The fix is to widen the *stranded* shot
+  (`col-span-2 lg:col-span-1`), not to reorder the mosaic, because the desktop
+  sequence is tuned separately and reordering breaks it. Verify by summing each
+  row's child widths plus gaps against the grid width — a short row is a hole,
+  and it is far easier to measure than to spot by eye.
 - **A full-bleed image wants explicit pixel widths in `sizes`, not `100vw`.**
   `100vw` on a full-width band emits junk `1w` and `2w` srcset candidates and can
   leave the browser picking the 1600px file on a phone. `sizes="480px sm:768px
   lg:1280px xl:1600px"` gives a clean ladder.
+
+  **This applies to a band, not to a fluid grid cell.** A px ladder can only
+  state one value per Nuxt-Image screen (`320 / 640 / 768 / 1024 / 1280 / 1536`),
+  so it has to declare the *widest* case in each range. The gallery's mobile
+  cells measure 350 → 576 → 704 → 959 px across that span, meaning the sub-640
+  bucket would have to claim 576px and a 390px phone would fetch the 1280
+  candidate for a 350px box. There, `vw` is the accurate description and the two
+  junk candidates are the cheaper cost — the browser cannot select them, since
+  `sizes` already demands hundreds of px. Kill the junk by dropping `width`/
+  `height`, not by dropping `vw`.
 - **Strip EXIF before committing a photo.** iPhone captures carry GPS to ~5 m,
   the body and lens model, and the capture timestamp. This is a home bakery: §
   "Deliberate non-fixes" withholds the street address from the schema on
