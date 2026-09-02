@@ -2,5 +2,6 @@
 import withNuxt from './.nuxt/eslint.config.mjs'
 
 export default withNuxt(
-  // Your custom configs here
+  // Generated bundles wrangler leaves behind when previewing the static build.
+  { ignores: ['.wrangler/**'] },
 )

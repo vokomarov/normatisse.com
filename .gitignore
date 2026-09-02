@@ -7,12 +7,20 @@
 .nuxtrc
 dist
 
+# wrangler scratch dir (`wrangler pages dev` against .output/public)
+.wrangler
+
 # Node dependencies
 node_modules
 
 # Logs
 logs
 *.log
+
+# Raw Instagram exports staged before cropping. Local scratch only — never
+# committed. Note it still lives under `public/`, so a local `npm run generate`
+# copies it into the deploy; CI clones fresh, so nothing ships from there.
+public/images/bakery/download
 
 # Misc
 .DS_Store
@@ -23,3 +31,6 @@ logs
 .env
 .env.*
 !.env.example
+
+# Pre-strip originals of published photos (EXIF/GPS intact). Local only.
+.backup
